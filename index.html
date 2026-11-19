@@ -1,1374 +1,1825 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vòng Quay May Mắn Livestream HISEA • 5 Số Cuối SĐT</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --hisea-blue: #005BB5;
-      --hisea-blue-dark: #003B7A;
-      --hisea-navy: #071938;
-      --hisea-gold: #F5C351;
-      --hisea-gold-light: #FFE699;
-      --hisea-gold-dark: #C88A1E;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay May Mắn HISEA - Quay 5 Số Cuối SĐT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hisea-blue-dark: #16369E;
+            --hisea-blue-mid: #0D51B3;
+            --hisea-blue-light: #006EC4;
+            --hisea-gold: #F3C65F;
+            --hisea-gold-deep: #D99B26;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: linear-gradient(135deg, #16369E 0%, #0D51B3 50%, #006EC4 100%);
+            min-height: 100vh;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        .font-heading {
+            font-family: 'Montserrat', sans-serif;
+        }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Be Vietnam Pro', sans-serif;
-    }
+        /* Vành vòng quay vàng kim + hiệu ứng LED */
+        .wheel-rim {
+            background: conic-gradient(
+                from 0deg,
+                #FDE08D 0deg, #D99B26 45deg, #FFF3C4 90deg, #D99B26 135deg,
+                #FDE08D 180deg, #D99B26 225deg, #FFF3C4 270deg, #D99B26 315deg, #FDE08D 360deg
+            );
+            box-shadow: 0 25px 60px rgba(7, 22, 66, 0.58), inset 0 0 20px rgba(255, 255, 255, 0.75);
+        }
+        .pointer-shadow {
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
+        }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at 50% 15%, #0B6CD4 0%, #004A99 48%, #041738 100%);
-      color: #FFFFFF;
-      overflow-x: hidden;
-    }
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(243, 198, 95, 0.7); }
+            50% { box-shadow: 0 0 0 14px rgba(243, 198, 95, 0); }
+        }
+        .spin-btn-pulse:not(:disabled) {
+            animation: pulseGold 2s infinite;
+        }
 
-    .bg-grid-pattern {
-      background-image:
-        radial-gradient(rgba(255, 230, 153, 0.08) 1px, transparent 1px),
-        radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 36px 36px;
-      background-position: 0 0, 18px 18px;
-    }
+        @keyframes ledBlinkA {
+            0%, 100% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 10px #FFF3C4; }
+            50% { opacity: 0.35; transform: scale(0.85); box-shadow: none; }
+        }
+        @keyframes ledBlinkB {
+            0%, 100% { opacity: 0.35; transform: scale(0.85); box-shadow: none; }
+            50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 10px #FFF3C4; }
+        }
+        .led-dot-a { animation: ledBlinkA 1.1s infinite ease-in-out; }
+        .led-dot-b { animation: ledBlinkB 1.1s infinite ease-in-out; }
 
-    .gold-gradient-text {
-      background: linear-gradient(180deg, #FFF3C4 0%, #F5C351 55%, #D4911C 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        /* Tủ máy quay số 5 chữ số (Slot Machine) - cố định chiều cao 160px tuyệt đối */
+        .slot-machine-cabinet {
+            background: linear-gradient(180deg, #0B1F63 0%, #14369B 52%, #09184D 100%);
+            box-shadow: 0 25px 60px rgba(7, 22, 66, 0.65), inset 0 2px 14px rgba(255, 255, 255, 0.28);
+        }
+        .slot-reel-window {
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
+            box-sizing: content-box !important;
+            position: relative !important;
+            overflow: hidden !important;
+            background: linear-gradient(180deg, #CBD5E1 0%, #FFFFFF 22%, #FFFFFF 78%, #CBD5E1 100%);
+            box-shadow: inset 0 14px 20px rgba(15, 23, 42, 0.34), inset 0 -14px 20px rgba(15, 23, 42, 0.34);
+        }
+        .slot-reel-strip {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            will-change: transform;
+        }
+        .slot-reel-cell {
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
 
-    .gold-btn {
-      background: linear-gradient(180deg, #FFE48F 0%, #F5C351 50%, #D99621 100%);
-      color: #071938;
-      box-shadow: 0 6px 20px rgba(245, 195, 81, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.75);
-      transition: all 0.18s ease;
-    }
+        @keyframes slotDigitLockPop {
+            0% { transform: scale(1); }
+            45% { transform: scale(1.16); color: #D93025; }
+            100% { transform: scale(1); color: #14369B; }
+        }
+        .slot-digit-locked {
+            animation: slotDigitLockPop 0.42s ease-out;
+        }
 
-    .gold-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      filter: brightness(1.06);
-      box-shadow: 0 10px 26px rgba(245, 195, 81, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.85);
-    }
-
-    .gold-btn:active:not(:disabled) {
-      transform: translateY(1px);
-    }
-
-    .gold-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      filter: grayscale(0.4);
-    }
-
-    .glass-panel {
-      background: rgba(6, 24, 58, 0.78);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(245, 195, 81, 0.3);
-      box-shadow: 0 18px 45px rgba(0, 10, 30, 0.45);
-    }
-
-    /* Slot Machine 5 Reels */
-    .slot-cabinet {
-      background: linear-gradient(180deg, #092252 0%, #051433 100%);
-      border: 3px solid #F5C351;
-      box-shadow:
-        0 0 0 5px rgba(245, 195, 81, 0.14),
-        0 24px 60px rgba(0, 8, 25, 0.65),
-        inset 0 2px 18px rgba(255, 230, 153, 0.2);
-    }
-
-    .slot-reel-window {
-      position: relative;
-      height: 150px;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #CBD5E1 0%, #FFFFFF 22%, #FFFFFF 78%, #CBD5E1 100%);
-      border: 3px solid #F5C351;
-      box-shadow:
-        inset 0 14px 18px rgba(7, 25, 56, 0.32),
-        inset 0 -14px 18px rgba(7, 25, 56, 0.32),
-        0 8px 20px rgba(0, 0, 0, 0.35);
-    }
-
-    .slot-reel-window::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 2px;
-      background: rgba(220, 38, 38, 0.22);
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    .slot-reel-strip {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      will-change: transform;
-    }
-
-    .slot-reel-cell {
-      height: 150px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4.5rem;
-      font-weight: 900;
-      line-height: 1;
-      color: #082F7A;
-      text-shadow: 0 3px 0 rgba(0, 91, 181, 0.16);
-      user-select: none;
-    }
-
-    @media (max-width: 640px) {
-      .slot-reel-window {
-        height: 110px;
-      }
-      .slot-reel-cell {
-        height: 110px;
-        font-size: 3.1rem;
-      }
-    }
-
-    /* Wheel Styling */
-    .wheel-outer-rim {
-      position: relative;
-      border-radius: 9999px;
-      padding: 14px;
-      background: conic-gradient(from 0deg, #F5C351, #FFF0B3, #C88A1E, #F5C351, #FFE699, #B97A12, #F5C351);
-      box-shadow:
-        0 0 0 6px rgba(7, 25, 56, 0.85),
-        0 20px 55px rgba(0, 8, 25, 0.7),
-        inset 0 0 18px rgba(255, 255, 255, 0.65);
-    }
-
-    .wheel-pointer {
-      position: absolute;
-      top: -16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 30;
-      width: 44px;
-      height: 52px;
-      filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
-    }
-
-    .led-dot {
-      position: absolute;
-      width: 9px;
-      height: 9px;
-      border-radius: 9999px;
-      background: #FFF7D6;
-      box-shadow: 0 0 8px #FFE066, 0 0 14px #F5C351;
-      transform: translate(-50%, -50%);
-      animation: ledBlink 1.2s infinite alternate;
-    }
-
-    .led-dot:nth-child(even) {
-      animation-delay: 0.6s;
-    }
-
-    @keyframes ledBlink {
-      0% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.85); }
-      100% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
-    }
-
-    /* Live Mode Hide Controls */
-    body.live-mode #modeControlBar,
-    body.live-mode #managementSidebar {
-      display: none !important;
-    }
-
-    body.live-mode #mainWorkspaceGrid {
-      grid-template-columns: 1fr !important;
-      max-width: 1080px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(7, 25, 56, 0.5);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(245, 195, 81, 0.45);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(245, 195, 81, 0.75);
-    }
-  </style>
+        /* Thanh cuộn tinh gọn */
+        textarea::-webkit-scrollbar,
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        textarea::-webkit-scrollbar-thumb,
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 999px;
+        }
+    </style>
 </head>
-<body class="bg-grid-pattern">
+<body class="flex flex-col min-h-screen">
 
-  <!-- TOP HEADER BAR -->
-  <header class="sticky top-0 z-40 border-b border-amber-300/25 bg-[#051636]/90 backdrop-blur-md">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <!-- Brand Logo & Title -->
-      <div class="flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-full bg-white border-2 border-[#F5C351] shadow-lg flex items-center justify-center p-1.5 shrink-0">
-          <!-- HISEA 6-Wing SVG Logo -->
-          <svg viewBox="0 0 120 120" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <g transform="translate(60,46)">
-              <path d="M-4,-34 C6,-26 12,-14 8,-4 C2,-10 -6,-14 -15,-12 C-14,-22 -9,-29 -4,-34 Z" fill="#0E2A6E"/>
-              <path d="M27,-19 C24,-7 16,3 6,4 C8,-4 7,-13 1,-20 C11,-23 19,-22 27,-19 Z" fill="#006EC4"/>
-              <path d="M30,15 C19,19 7,17 1,8 C9,6 16,1 19,-8 C26,-1 30,7 30,15 Z" fill="#18429B"/>
-              <path d="M4,34 C-6,26 -12,14 -8,4 C-2,10 6,14 15,12 C14,22 9,29 4,34 Z" fill="#0E2A6E"/>
-              <path d="M-27,19 C-24,7 -16,-3 -6,-4 C-8,4 -7,13 -1,20 C-11,23 -19,22 -27,19 Z" fill="#006EC4"/>
-              <path d="M-30,-15 C-19,-19 -7,-17 -1,-8 C-9,-6 -16,-1 -19,8 C-26,1 -30,-7 -30,-15 Z" fill="#18429B"/>
-            </g>
-            <text x="60" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="25" letter-spacing="2.5" fill="#006EC4">HISEA</text>
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-white">
-              VÒNG QUAY MAY MẮN <span class="gold-gradient-text">HISEA</span>
-            </h1>
-            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-600/90 text-white border border-red-400/50">
-              <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> LIVE
-            </span>
-          </div>
-          <p class="text-xs text-blue-200/85">Hệ thống quay 5 số cuối SĐT công khai • Minh bạch trực tiếp</p>
-        </div>
-      </div>
-
-      <!-- Quick Header Actions -->
-      <div class="flex items-center gap-2 sm:gap-2.5">
-        <button id="soundToggleBtn" type="button" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center gap-1.5 transition">
-          <span id="soundIcon">🔊</span>
-          <span class="hidden md:inline" id="soundLabel">Âm thanh: Bật</span>
-        </button>
-
-        <button id="historyModalBtn" type="button" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 border border-white/15 text-amber-200 flex items-center gap-1.5 transition">
-          <span>🏆</span>
-          <span>Trúng giải (<span id="winnerCountBadge">0</span>)</span>
-        </button>
-
-        <button id="liveModeBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-lg shadow-red-900/40 border border-red-300/40 flex items-center gap-1.5 transition">
-          <span id="liveModeIcon">🎥</span>
-          <span id="liveModeText">Chế độ Live</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-5">
-
-    <!-- MODE & DURATION CONTROL BAR (Hidden in Live Mode) -->
-    <div id="modeControlBar" class="mb-5 flex flex-wrap items-center justify-center gap-3">
-      <div class="inline-flex p-1.5 rounded-2xl bg-[#051636]/90 border border-amber-300/30 shadow-xl">
-        <button id="tabSlotMode" type="button" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 gold-btn">
-          <span>🎰</span> Quay 5 Số Cuối SĐT
-        </button>
-        <button id="tabWheelMode" type="button" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-blue-100 hover:text-white transition flex items-center gap-2">
-          <span>🎡</span> Vòng Quay Tròn
-        </button>
-      </div>
-
-      <!-- Spin Duration Control -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#051636]/90 border border-amber-300/30 shadow-xl">
-        <span class="text-xs sm:text-sm font-bold text-amber-200">⏱️ Thời gian quay:</span>
-        <input id="spinDurationInput" type="number" min="1" max="60" value="5" class="w-16 px-2.5 py-1 rounded-lg bg-white text-[#071938] font-extrabold text-center text-sm border-2 border-[#F5C351] focus:outline-none" />
-        <span class="text-xs sm:text-sm font-bold text-white">giây</span>
-      </div>
-    </div>
-
-    <!-- WORKSPACE GRID -->
-    <div id="mainWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-      <!-- LEFT / CENTER STAGE (8 cols) -->
-      <section class="lg:col-span-8 flex flex-col items-center">
-
-        <!-- PRIZE BANNER -->
-        <div class="w-full mb-5 rounded-2xl bg-gradient-to-r from-[#FFFDF5] via-[#FFF6D6] to-[#FFFDF5] border-2 border-[#F5C351] shadow-xl px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <span class="text-2xl sm:text-3xl shrink-0">🎁</span>
-            <div class="min-w-0 flex-1">
-              <div class="text-[11px] font-extrabold uppercase tracking-wider text-amber-700">Hạng mục giải thưởng đang quay</div>
-              <input id="prizeTitleInput" type="text" value="GIẢI ĐẶC BIỆT: QUÀ TẶNG TRI ÂN KHÁCH HÀNG HISEA" class="w-full bg-transparent text-[#062356] font-black text-base sm:text-xl focus:outline-none focus:ring-2 focus:ring-amber-400 rounded px-1 -ml-1 truncate" />
-            </div>
-          </div>
-          <button id="editPrizeFocusBtn" type="button" title="Sửa tên giải thưởng" class="p-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 transition shrink-0">
-            ✏️
-          </button>
-        </div>
-
-        <!-- VIEW 1: 5-DIGIT SLOT MACHINE (DEFAULT) -->
-        <div id="slotMachineView" class="w-full">
-          <div class="slot-cabinet rounded-3xl p-4 sm:p-7 relative">
-            <!-- Cabinet Header with HISEA White Circular Badge -->
-            <div class="flex items-center justify-between gap-2 mb-5 pb-3 border-b border-amber-300/20">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-[#F5C351] shadow-[0_0_10px_#F5C351]"></span>
-                <span class="w-3 h-3 rounded-full bg-blue-300/50"></span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-full bg-white border-2 border-[#F5C351] p-1 flex items-center justify-center shadow">
-                  <svg viewBox="0 0 120 120" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(60,46)">
-                      <path d="M-4,-34 C6,-26 12,-14 8,-4 C2,-10 -6,-14 -15,-12 C-14,-22 -9,-29 -4,-34 Z" fill="#0E2A6E"/>
-                      <path d="M27,-19 C24,-7 16,3 6,4 C8,-4 7,-13 1,-20 C11,-23 19,-22 27,-19 Z" fill="#006EC4"/>
-                      <path d="M30,15 C19,19 7,17 1,8 C9,6 16,1 19,-8 C26,-1 30,7 30,15 Z" fill="#18429B"/>
-                      <path d="M4,34 C-6,26 -12,14 -8,4 C-2,10 6,14 15,12 C14,22 9,29 4,34 Z" fill="#0E2A6E"/>
-                      <path d="M-27,19 C-24,7 -16,-3 -6,-4 C-8,4 -7,13 -1,20 C-11,23 -19,22 -27,19 Z" fill="#006EC4"/>
-                      <path d="M-30,-15 C-19,-19 -7,-17 -1,-8 C-9,-6 -16,-1 -19,8 C-26,1 -30,-7 -30,-15 Z" fill="#18429B"/>
-                    </g>
-                    <text x="60" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="25" letter-spacing="2.5" fill="#006EC4">HISEA</text>
-                  </svg>
+    <!-- HEADER THƯƠNG HIỆU & ĐIỀU KHIỂN CHUNG -->
+    <header id="topHeader" class="w-full border-b border-white/15 bg-slate-950/25 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <!-- Huy hiệu vòng tròn trắng viền vàng kim tôn trọn vẹn màu gốc logo HISEA -->
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-[#F3C65F] p-1.5 shadow-lg flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 220 210" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="Logo HISEA">
+                        <g transform="translate(110, 74)">
+                            <path d="M -5,-58 L 14,-44 C -8,-32 -16,-14 -12,4 C -24,-12 -23,-38 -5,-58 Z" fill="#0E2A6E"/>
+                            <path d="M 48,-33 L 46,-9 C 24,-22 5,-20 -9,-8 C 0,-26 24,-37 48,-33 Z" fill="#006EC4"/>
+                            <path d="M 52,25 L 30,36 C 30,11 19,-5 3,-11 C 23,-13 44,2 52,25 Z" fill="#18429B"/>
+                            <path d="M 5,58 L -14,44 C 8,32 16,14 12,-4 C 24,12 23,38 5,58 Z" fill="#0E2A6E"/>
+                            <path d="M -48,33 L -46,9 C -24,22 -5,20 9,8 C 0,26 -24,37 -48,33 Z" fill="#006EC4"/>
+                            <path d="M -52,-25 L -30,-36 C -30,-11 -19,5 -3,11 C -23,13 -44,-2 -52,-25 Z" fill="#18429B"/>
+                        </g>
+                        <g fill="none" stroke="#006EC4" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M 16,154 V 196 M 44,154 V 196 M 16,175 H 44"/>
+                            <path d="M 66,154 V 196"/>
+                            <path d="M 114,159 C 110,154 92,153 89,163 C 86,174 115,173 115,186 C 115,197 92,198 87,191"/>
+                            <path d="M 158,154 H 134 V 196 H 158 M 134,175 H 154"/>
+                            <path d="M 174,196 L 189,154 L 204,196 M 179,183 H 199"/>
+                        </g>
+                    </svg>
                 </div>
-                <span class="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-[#F5C351]">
-                  MÁY QUAY 5 SỐ CUỐI ĐIỆN THOẠI • HISEA
-                </span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-blue-300/50"></span>
-                <span class="w-3 h-3 rounded-full bg-[#F5C351] shadow-[0_0_10px_#F5C351]"></span>
-              </div>
+                <div>
+                    <h1 class="font-heading font-black text-sm sm:text-base md:text-lg tracking-wide text-[#F3C65F] leading-tight">
+                        VÒNG QUAY MAY MẮN HISEA - QUAY SỐ TRÚNG THƯỞNG
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100/90">Hệ thống quay số Livestream công khai • 5 số cuối SĐT (00000 – 99999)</p>
+                </div>
             </div>
 
-            <!-- 5 REELS GRID (No column labels, all buttons say QUAY THƯỞNG) -->
-            <div class="rounded-2xl bg-[#041029]/90 border border-amber-300/25 p-3 sm:p-5 mb-5">
-              <div class="grid grid-cols-5 gap-2 sm:gap-3.5">
-                <!-- Reel 0 -->
-                <div class="flex flex-col items-center gap-2.5">
-                  <div class="slot-reel-window" id="reelWindow0">
-                    <div class="slot-reel-strip" id="reelStrip0"></div>
-                  </div>
-                  <button type="button" id="spinColBtn0" data-col="0" class="w-full py-2.5 px-1 rounded-xl font-extrabold text-[11px] sm:text-xs gold-btn uppercase tracking-wide">
-                    🎯 QUAY THƯỞNG
-                  </button>
-                </div>
-
-                <!-- Reel 1 -->
-                <div class="flex flex-col items-center gap-2.5">
-                  <div class="slot-reel-window" id="reelWindow1">
-                    <div class="slot-reel-strip" id="reelStrip1"></div>
-                  </div>
-                  <button type="button" id="spinColBtn1" data-col="1" class="w-full py-2.5 px-1 rounded-xl font-extrabold text-[11px] sm:text-xs gold-btn uppercase tracking-wide">
-                    🎯 QUAY THƯỞNG
-                  </button>
-                </div>
-
-                <!-- Reel 2 -->
-                <div class="flex flex-col items-center gap-2.5">
-                  <div class="slot-reel-window" id="reelWindow2">
-                    <div class="slot-reel-strip" id="reelStrip2"></div>
-                  </div>
-                  <button type="button" id="spinColBtn2" data-col="2" class="w-full py-2.5 px-1 rounded-xl font-extrabold text-[11px] sm:text-xs gold-btn uppercase tracking-wide">
-                    🎯 QUAY THƯỞNG
-                  </button>
-                </div>
-
-                <!-- Reel 3 -->
-                <div class="flex flex-col items-center gap-2.5">
-                  <div class="slot-reel-window" id="reelWindow3">
-                    <div class="slot-reel-strip" id="reelStrip3"></div>
-                  </div>
-                  <button type="button" id="spinColBtn3" data-col="3" class="w-full py-2.5 px-1 rounded-xl font-extrabold text-[11px] sm:text-xs gold-btn uppercase tracking-wide">
-                    🎯 QUAY THƯỞNG
-                  </button>
-                </div>
-
-                <!-- Reel 4 -->
-                <div class="flex flex-col items-center gap-2.5">
-                  <div class="slot-reel-window" id="reelWindow4">
-                    <div class="slot-reel-strip" id="reelStrip4"></div>
-                  </div>
-                  <button type="button" id="spinColBtn4" data-col="4" class="w-full py-2.5 px-1 rounded-xl font-extrabold text-[11px] sm:text-xs gold-btn uppercase tracking-wide">
-                    🎯 QUAY THƯỞNG
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- LIVE MATCH STATUS BAR -->
-            <div id="slotMatchBanner" class="mb-5 rounded-2xl bg-[#041029]/95 border border-blue-400/25 px-4 py-3.5 text-center">
-              <div class="text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-1">
-                KẾT QUẢ ĐỐI CHIẾU 5 SỐ CUỐI SĐT DỰ THƯỞNG
-              </div>
-              <div id="slotMatchResultText" class="text-base sm:text-xl font-extrabold text-[#F5C351]">
-                Bấm "QUAY THƯỞNG" hoặc phím Space để bắt đầu...
-              </div>
-            </div>
-
-            <!-- MAIN ACTION BUTTONS -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <button id="spinAll5Btn" type="button" class="flex-1 py-4 px-6 rounded-2xl font-black text-base sm:text-xl gold-btn uppercase tracking-wider flex items-center justify-center gap-2.5">
-                <span>🎰</span> QUAY CẢ 5 SỐ
-              </button>
-              <button id="resetSlotBtn" type="button" class="py-4 px-5 rounded-2xl font-bold text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-blue-100 transition flex items-center justify-center gap-2">
-                <span>↺</span> Đặt lại 0-0-0-0-0
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- VIEW 2: CLASSIC SPINNING WHEEL -->
-        <div id="wheelView" class="hidden w-full flex-col items-center">
-          <div class="relative flex items-center justify-center my-2">
-            <!-- Top Pointer -->
-            <div class="wheel-pointer">
-              <svg viewBox="0 0 44 52" class="w-full h-full">
-                <path d="M22 50 L4 14 A18 18 0 1 1 40 14 Z" fill="#DC2626" stroke="#F5C351" stroke-width="3.5"/>
-                <circle cx="22" cy="17" r="6" fill="#FFF3C4"/>
-              </svg>
-            </div>
-
-            <!-- Outer Golden Rim + LEDs -->
-            <div class="wheel-outer-rim" id="wheelOuterRim">
-              <div id="wheelLedRing" class="absolute inset-0 pointer-events-none z-20"></div>
-              <div class="relative rounded-full overflow-hidden bg-[#071938] shadow-inner w-[320px] h-[320px] sm:w-[460px] sm:h-[460px] md:w-[500px] md:h-[500px]">
-                <canvas id="wheelCanvas" width="800" height="800" class="w-full h-full block"></canvas>
-
-                <!-- Center Spin Hub with HISEA White Circular Badge -->
-                <button id="spinWheelCenterBtn" type="button" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white border-4 border-[#F5C351] shadow-[0_0_28px_rgba(0,0,0,0.65)] hover:scale-105 active:scale-95 transition flex flex-col items-center justify-center p-2 cursor-pointer">
-                  <svg viewBox="0 0 120 120" class="w-12 h-12 sm:w-14 sm:h-14" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(60,46)">
-                      <path d="M-4,-34 C6,-26 12,-14 8,-4 C2,-10 -6,-14 -15,-12 C-14,-22 -9,-29 -4,-34 Z" fill="#0E2A6E"/>
-                      <path d="M27,-19 C24,-7 16,3 6,4 C8,-4 7,-13 1,-20 C11,-23 19,-22 27,-19 Z" fill="#006EC4"/>
-                      <path d="M30,15 C19,19 7,17 1,8 C9,6 16,1 19,-8 C26,-1 30,7 30,15 Z" fill="#18429B"/>
-                      <path d="M4,34 C-6,26 -12,14 -8,4 C-2,10 6,14 15,12 C14,22 9,29 4,34 Z" fill="#0E2A6E"/>
-                      <path d="M-27,19 C-24,7 -16,-3 -6,-4 C-8,4 -7,13 -1,20 C-11,23 -19,22 -27,19 Z" fill="#006EC4"/>
-                      <path d="M-30,-15 C-19,-19 -7,-17 -1,-8 C-9,-6 -16,-1 -19,8 C-26,1 -30,-7 -30,-15 Z" fill="#18429B"/>
-                    </g>
-                    <text x="60" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="25" letter-spacing="2.5" fill="#006EC4">HISEA</text>
-                  </svg>
-                  <span class="text-[11px] sm:text-xs font-black text-[#071938] tracking-wider -mt-0.5">QUAY</span>
+            <div class="flex items-center gap-2 sm:gap-2.5">
+                <button type="button" id="soundToggleBtn"
+                    class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 cursor-pointer">
+                    <span id="soundIcon">🔊</span>
+                    <span class="hidden sm:inline" id="soundLabel">Âm thanh: Bật</span>
                 </button>
-              </div>
+                <button type="button" id="liveModeBtn"
+                    class="px-3.5 py-2 rounded-xl bg-[#F3C65F] hover:bg-[#eab848] text-[#0F2878] font-heading font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center gap-1.5 cursor-pointer">
+                    <span>🖥️</span>
+                    <span id="liveModeLabel">Chế độ Live</span>
+                </button>
             </div>
-          </div>
-
-          <button id="spinWheelBottomBtn" type="button" class="mt-5 px-10 py-4 rounded-2xl font-black text-lg gold-btn uppercase tracking-wider shadow-xl">
-            🎡 BẮT ĐẦU QUAY VÒNG TRÒN
-          </button>
         </div>
+    </header>
 
-      </section>
+    <!-- KHU VỰC CHÍNH -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-5 sm:py-7">
+        <div id="mainGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
 
-      <!-- RIGHT SIDEBAR: PARTICIPANT LIST & GOOGLE SHEET SYNC (4 cols - Hidden in Live Mode) -->
-      <aside id="managementSidebar" class="lg:col-span-4 glass-panel rounded-3xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-base font-extrabold text-[#F5C351] flex items-center gap-2">
-            <span>📋</span> Danh sách SĐT dự thưởng
-          </h2>
-          <span id="participantCountPill" class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-blue-500/25 border border-blue-300/30 text-blue-100">
-            0 người
-          </span>
-        </div>
+            <!-- CỘT TRÁI: SÂN KHẤU QUAY SỐ -->
+            <div id="wheelColumn" class="lg:col-span-7 flex flex-col items-center justify-center">
+                <!-- Thanh chọn chế độ quay + Cài đặt thời gian quay (giây) -->
+                <div id="spinModeToolbar" class="flex flex-wrap items-center justify-center gap-2.5 mb-4">
+                    <div class="inline-flex p-1.5 rounded-2xl bg-slate-950/35 border border-white/20 backdrop-blur-md shadow-xl">
+                        <button type="button" id="modeWheelBtn"
+                            class="px-4 sm:px-5 py-2 rounded-xl bg-gradient-to-r from-[#F3C65F] to-[#E5A93B] text-[#0F2878] font-heading font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-2 cursor-pointer">
+                            <span>🎡</span>
+                            <span>Vòng Quay Tròn</span>
+                        </button>
+                        <button type="button" id="modeSlotBtn"
+                            class="px-4 sm:px-5 py-2 rounded-xl text-blue-100 hover:text-white font-heading font-extrabold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer">
+                            <span>🎰</span>
+                            <span>Quay 5 Số Cuối SĐT</span>
+                        </button>
+                    </div>
 
-        <!-- Google Sheet Connection Box -->
-        <div class="mb-4 p-3.5 rounded-2xl bg-[#041029]/85 border border-amber-300/25">
-          <label class="block text-xs font-bold text-amber-200 mb-1.5">
-            🔗 Đồng bộ từ Google Sheet (Tự lấy 5 số cuối SĐT)
-          </label>
-          <div class="flex gap-2">
-            <input id="googleSheetUrlInput" type="url" placeholder="Dán link Google Sheet công khai..." class="flex-1 px-3 py-2 rounded-xl bg-white/95 text-[#071938] text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#F5C351]" />
-            <button id="syncSheetBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-extrabold gold-btn shrink-0">
-              Tải về
-            </button>
-          </div>
-          <p id="sheetSyncStatus" class="mt-1.5 text-[11px] text-blue-200/75">
-            Hỗ trợ cột Tên + SĐT (tự động cắt 5 số cuối SĐT).
-          </p>
-        </div>
+                    <!-- Ô chỉnh thời gian quay (giây) -->
+                    <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-950/35 border border-white/20 backdrop-blur-md shadow-xl text-xs sm:text-sm">
+                        <span class="text-[#F3C65F] font-bold">⏱️ Thời gian:</span>
+                        <input type="number" id="spinDurationInput" min="1" max="60" step="1" value="5"
+                            aria-label="Thời gian quay tính bằng giây"
+                            style="background-color: #FFFFFF; color: #14369B;"
+                            class="w-14 text-center font-heading font-black text-sm text-[#14369B] bg-white rounded-lg py-1 px-1.5 border border-[#F3C65F] focus:outline-none" />
+                        <span class="text-blue-100 font-semibold">giây</span>
+                    </div>
+                </div>
 
-        <!-- Manual Input / Paste Area -->
-        <div class="mb-3">
-          <div class="flex items-center justify-between mb-1">
-            <label class="text-xs font-bold text-blue-100">Nhập / Dán danh sách (Mỗi dòng 1 người)</label>
-            <button id="loadSampleBtn" type="button" class="text-[11px] font-bold text-amber-300 hover:underline">
-              + Nạp dữ liệu mẫu
-            </button>
-          </div>
-          <textarea id="rawParticipantsInput" rows="5" placeholder="Ví dụ:&#10;Nguyễn Văn An - 0901234567&#10;Trần Thị Bình - 0912.888.999&#10;Lê Hoàng Nam - 0987654321" class="w-full p-3 rounded-xl bg-[#041029]/90 border border-white/15 text-xs text-white placeholder-blue-300/40 focus:outline-none focus:border-[#F5C351]"></textarea>
-          <div class="mt-2 flex items-center justify-between gap-2">
-            <button id="applyListBtn" type="button" class="flex-1 py-2 px-3 rounded-xl text-xs font-extrabold bg-blue-600 hover:bg-blue-500 text-white transition">
-              ✓ Cập nhật danh sách
-            </button>
-            <button id="clearListBtn" type="button" class="py-2 px-3 rounded-xl text-xs font-bold bg-white/10 hover:bg-red-500/30 text-blue-100 transition">
-              Xóa hết
-            </button>
-          </div>
-        </div>
+                <!-- Banner tên giải thưởng -->
+                <div class="w-full max-w-3xl mb-5 text-center">
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-amber-400/20 border border-[#F3C65F]/60 text-[#F3C65F] text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+                        Quay Số Công Khai • Minh Bạch • Trực Tiếp
+                    </span>
+                    <div class="relative flex items-center justify-center group">
+                        <input type="text" id="prizeTitleInput"
+                            value="GIẢI ĐẶC BIỆT: 1 NĂM HẢI SẢN TẦN CANH 25.000.000Đ"
+                            placeholder="Nhập tên giải thưởng đang quay..."
+                            aria-label="Tên giải thưởng đang quay"
+                            style="background-color: #FFFFFF; color: #14369B;"
+                            class="w-full text-center font-heading font-black text-xs sm:text-sm md:text-base lg:text-lg text-[#14369B] bg-white hover:bg-amber-50/95 focus:bg-white border-2 border-[#F3C65F] rounded-2xl pl-4 pr-11 py-3 focus:outline-none focus:ring-2 focus:ring-[#F3C65F] shadow-xl transition" />
+                        <button type="button" id="editPrizeQuickBtn" title="Chỉnh sửa tên giải thưởng"
+                            class="absolute right-3 p-1.5 rounded-lg bg-blue-50 hover:bg-[#F3C65F] text-[#14369B] text-xs font-bold border border-blue-200 transition cursor-pointer">
+                            ✏️
+                        </button>
+                    </div>
+                </div>
 
-        <!-- Options -->
-        <div class="mb-3 pt-2 border-t border-white/10 flex flex-col gap-2">
-          <label class="flex items-center gap-2 text-xs text-blue-100 cursor-pointer select-none">
-            <input id="autoRemoveWinnerChk" type="checkbox" checked class="w-4 h-4 accent-[#F5C351] rounded" />
-            <span>Tự động loại người đã trúng khỏi lượt quay sau</span>
-          </label>
-          <label class="flex items-center gap-2 text-xs text-blue-100 cursor-pointer select-none">
-            <input id="maskPhoneLiveChk" type="checkbox" checked class="w-4 h-4 accent-[#F5C351] rounded" />
-            <span>Che 3 số giữa SĐT khi hiện trên Livestream (VD: 090***4567)</span>
-          </label>
-        </div>
+                <!-- ==================================================== -->
+                <!-- CHẾ ĐỘ 1: VÒNG QUAY TRÒN 360°                        -->
+                <!-- ==================================================== -->
+                <div id="wheelModeContainer" class="relative flex items-center justify-center my-2 select-none">
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 z-30 pointer-shadow">
+                        <svg width="48" height="56" viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 54L4 17C1.5 11 5.5 2 12.5 2H35.5C42.5 2 46.5 11 44 17L24 54Z" fill="#EF4444" stroke="#FFFFFF" stroke-width="3.5"/>
+                            <circle cx="24" cy="15" r="5.5" fill="#FDE08D"/>
+                        </svg>
+                    </div>
 
-        <!-- Parsed Preview List -->
-        <div class="max-h-[240px] overflow-y-auto rounded-xl bg-[#041029]/70 border border-white/10 divide-y divide-white/5" id="parsedListContainer">
-          <div class="p-4 text-center text-xs text-blue-300/60">
-            Chưa có dữ liệu. Hãy tải từ Google Sheet hoặc dán danh sách SĐT ở trên.
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
+                    <div class="wheel-rim w-[335px] h-[335px] sm:w-[465px] sm:h-[465px] md:w-[515px] md:h-[515px] rounded-full p-4 sm:p-5 flex items-center justify-center relative">
+                        <div id="wheelLedRing" class="absolute inset-0 pointer-events-none"></div>
 
-  <!-- WINNER ANNOUNCEMENT MODAL -->
-  <div id="winnerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-    <div class="relative w-full max-w-lg rounded-3xl bg-gradient-to-b from-[#0B2B6B] to-[#051433] border-4 border-[#F5C351] p-6 sm:p-8 text-center shadow-[0_0_70px_rgba(245,195,81,0.45)]">
-      <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs font-extrabold uppercase tracking-widest mb-3">
-        🎉 CHÚC MỪNG KHÁCH HÀNG MAY MẮN 🎉
-      </div>
+                        <div class="w-full h-full rounded-full overflow-hidden border-4 border-[#0F2878] bg-[#14369B] relative shadow-inner">
+                            <canvas id="wheelCanvas" width="800" height="800" class="w-full h-full block"></canvas>
+                        </div>
 
-      <div id="modalPrizeName" class="text-sm sm:text-base font-bold text-blue-200 mb-3">
-        GIẢI ĐẶC BIỆT
-      </div>
+                        <button type="button" id="spinBtn"
+                            class="spin-btn-pulse absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white border-4 border-[#F3C65F] ring-4 ring-[#14369B] text-[#14369B] font-heading font-black tracking-wider shadow-2xl hover:scale-105 active:scale-95 disabled:opacity-75 disabled:cursor-not-allowed transition z-20 flex flex-col items-center justify-center cursor-pointer overflow-hidden p-1.5">
+                            <svg viewBox="0 0 220 210" class="w-11 h-11 sm:w-12 sm:h-12 -mb-0.5 shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <g transform="translate(110, 74)">
+                                    <path d="M -5,-58 L 14,-44 C -8,-32 -16,-14 -12,4 C -24,-12 -23,-38 -5,-58 Z" fill="#0E2A6E"/>
+                                    <path d="M 48,-33 L 46,-9 C 24,-22 5,-20 -9,-8 C 0,-26 24,-37 48,-33 Z" fill="#006EC4"/>
+                                    <path d="M 52,25 L 30,36 C 30,11 19,-5 3,-11 C 23,-13 44,2 52,25 Z" fill="#18429B"/>
+                                    <path d="M 5,58 L -14,44 C 8,32 16,14 12,-4 C 24,12 23,38 5,58 Z" fill="#0E2A6E"/>
+                                    <path d="M -48,33 L -46,9 C -24,22 -5,20 9,8 C 0,26 -24,37 -48,33 Z" fill="#006EC4"/>
+                                    <path d="M -52,-25 L -30,-36 C -30,-11 -19,5 -3,11 C -23,13 -44,-2 -52,-25 Z" fill="#18429B"/>
+                                </g>
+                                <g fill="none" stroke="#006EC4" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M 16,154 V 196 M 44,154 V 196 M 16,175 H 44"/>
+                                    <path d="M 66,154 V 196"/>
+                                    <path d="M 114,159 C 110,154 92,153 89,163 C 86,174 115,173 115,186 C 115,197 92,198 87,191"/>
+                                    <path d="M 158,154 H 134 V 196 H 158 M 134,175 H 154"/>
+                                    <path d="M 174,196 L 189,154 L 204,196 M 179,183 H 199"/>
+                                </g>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-black leading-none text-[#14369B]">QUAY</span>
+                        </button>
+                    </div>
+                </div>
 
-      <!-- 5-Digit Winning Code -->
-      <div class="my-3 py-4 px-6 rounded-2xl bg-white border-4 border-[#F5C351] shadow-inner">
-        <div class="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mb-1">
-          5 SỐ CUỐI ĐIỆN THOẠI TRÚNG THƯỞNG
-        </div>
-        <div id="modalWinningDigits" class="text-5xl sm:text-6xl font-black tracking-[0.18em] text-[#082F7A] pl-[0.18em]">
-          00000
-        </div>
-      </div>
+                <!-- ==================================================== -->
+                <!-- CHẾ ĐỘ 2: MÁY QUAY 5 SỐ CUỐI SĐT                     -->
+                <!-- ==================================================== -->
+                <div id="slotModeContainer" class="hidden w-full max-w-3xl my-2 select-none">
+                    <div class="slot-machine-cabinet rounded-3xl p-4 sm:p-7 border-4 border-[#F3C65F] relative">
+                        <!-- Thanh đèn trang trí & Huy hiệu tròn trắng Logo HISEA trên tủ máy -->
+                        <div class="flex items-center justify-between gap-2 px-1 mb-4">
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#F3C65F] led-dot-a"></span>
+                                <div class="w-10 h-10 rounded-full bg-white border-2 border-[#F3C65F] p-1 shadow-md flex items-center justify-center">
+                                    <svg viewBox="0 0 220 210" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="Logo HISEA">
+                                        <g transform="translate(110, 74)">
+                                            <path d="M -5,-58 L 14,-44 C -8,-32 -16,-14 -12,4 C -24,-12 -23,-38 -5,-58 Z" fill="#0E2A6E"/>
+                                            <path d="M 48,-33 L 46,-9 C 24,-22 5,-20 -9,-8 C 0,-26 24,-37 48,-33 Z" fill="#006EC4"/>
+                                            <path d="M 52,25 L 30,36 C 30,11 19,-5 3,-11 C 23,-13 44,2 52,25 Z" fill="#18429B"/>
+                                            <path d="M 5,58 L -14,44 C 8,32 16,14 12,-4 C 24,12 23,38 5,58 Z" fill="#0E2A6E"/>
+                                            <path d="M -48,33 L -46,9 C -24,22 -5,20 9,8 C 0,26 -24,37 -48,33 Z" fill="#006EC4"/>
+                                            <path d="M -52,-25 L -30,-36 C -30,-11 -19,5 -3,11 C -23,13 -44,-2 -52,-25 Z" fill="#18429B"/>
+                                        </g>
+                                        <g fill="none" stroke="#006EC4" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M 16,154 V 196 M 44,154 V 196 M 16,175 H 44"/>
+                                            <path d="M 66,154 V 196"/>
+                                            <path d="M 114,159 C 110,154 92,153 89,163 C 86,174 115,173 115,186 C 115,197 92,198 87,191"/>
+                                            <path d="M 158,154 H 134 V 196 H 158 M 134,175 H 154"/>
+                                            <path d="M 174,196 L 189,154 L 204,196 M 179,183 H 199"/>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="font-heading font-extrabold text-xs sm:text-sm tracking-widest text-[#F3C65F] uppercase text-center">
+                                MÁY QUAY 5 SỐ CUỐI ĐIỆN THOẠI • HISEA
+                            </span>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="w-2.5 h-2.5 rounded-full bg-white led-dot-b"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#F3C65F] led-dot-a"></span>
+                            </div>
+                        </div>
 
-      <!-- Matched Customer Info -->
-      <div id="modalCustomerBox" class="mt-4 p-4 rounded-2xl bg-[#041029]/80 border border-amber-300/30">
-        <div id="modalWinnerName" class="text-xl sm:text-2xl font-black text-[#F5C351]">
-          Khách hàng may mắn
-        </div>
-        <div id="modalWinnerPhone" class="text-sm font-bold text-blue-200 mt-1">
-          SĐT: 090***0000
-        </div>
-      </div>
+                        <!-- Khung 5 guồng số lớn (không nhãn hàng chục/nghìn, toàn bộ nút là QUAY THƯỞNG) -->
+                        <div class="bg-[#081542] p-3 sm:p-5 rounded-2xl border-2 border-[#D99B26]/80 shadow-inner">
+                            <div class="grid grid-cols-5 gap-2 sm:gap-3.5">
+                                <!-- CỘT 1 -->
+                                <div class="flex flex-col items-center">
+                                    <div id="slotWindow0" class="slot-reel-window w-full rounded-2xl border-4 border-[#F3C65F]">
+                                        <div id="slotStrip0" class="slot-reel-strip font-heading font-black text-4xl sm:text-6xl text-[#14369B] select-none"></div>
+                                        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-red-500/15 pointer-events-none"></div>
+                                    </div>
+                                    <button type="button" id="spinDigitBtn0"
+                                        class="mt-3 w-full py-2.5 px-1 rounded-xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#D99B26] hover:brightness-105 active:scale-95 text-[#0F2878] font-heading font-black text-[10px] sm:text-xs shadow-lg border border-white/60 disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
+                                        🎯 QUAY THƯỞNG
+                                    </button>
+                                </div>
 
-      <div class="mt-6 flex items-center justify-center gap-3">
-        <button id="closeWinnerModalBtn" type="button" class="px-8 py-3.5 rounded-2xl font-black text-base gold-btn uppercase tracking-wide">
-          Tiếp tục quay
-        </button>
-      </div>
-    </div>
-  </div>
+                                <!-- CỘT 2 -->
+                                <div class="flex flex-col items-center">
+                                    <div id="slotWindow1" class="slot-reel-window w-full rounded-2xl border-4 border-[#F3C65F]">
+                                        <div id="slotStrip1" class="slot-reel-strip font-heading font-black text-4xl sm:text-6xl text-[#14369B] select-none"></div>
+                                        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-red-500/15 pointer-events-none"></div>
+                                    </div>
+                                    <button type="button" id="spinDigitBtn1"
+                                        class="mt-3 w-full py-2.5 px-1 rounded-xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#D99B26] hover:brightness-105 active:scale-95 text-[#0F2878] font-heading font-black text-[10px] sm:text-xs shadow-lg border border-white/60 disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
+                                        🎯 QUAY THƯỞNG
+                                    </button>
+                                </div>
 
-  <!-- WINNERS HISTORY MODAL -->
-  <div id="historyModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-    <div class="w-full max-w-xl rounded-3xl bg-[#071C47] border-2 border-[#F5C351] p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-white/15">
-        <h3 class="text-lg font-black text-[#F5C351]">🏆 Danh sách đã trúng giải</h3>
-        <button id="closeHistoryModalBtn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold">✕</button>
-      </div>
-      <div id="winnersHistoryList" class="max-h-[340px] overflow-y-auto space-y-2.5">
-        <p class="text-center text-sm text-blue-200/60 py-6">Chưa có lượt quay trúng thưởng nào.</p>
-      </div>
-      <div class="mt-5 pt-3 border-t border-white/15 flex justify-between items-center">
-        <button id="clearHistoryBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-red-500/20 hover:bg-red-500/35 text-red-200 border border-red-400/30">
-          Xóa lịch sử
-        </button>
-        <button id="closeHistoryFooterBtn" type="button" class="px-5 py-2 rounded-xl text-xs font-extrabold gold-btn">
-          Đóng
-        </button>
-      </div>
-    </div>
-  </div>
+                                <!-- CỘT 3 -->
+                                <div class="flex flex-col items-center">
+                                    <div id="slotWindow2" class="slot-reel-window w-full rounded-2xl border-4 border-[#F3C65F]">
+                                        <div id="slotStrip2" class="slot-reel-strip font-heading font-black text-4xl sm:text-6xl text-[#14369B] select-none"></div>
+                                        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-red-500/15 pointer-events-none"></div>
+                                    </div>
+                                    <button type="button" id="spinDigitBtn2"
+                                        class="mt-3 w-full py-2.5 px-1 rounded-xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#D99B26] hover:brightness-105 active:scale-95 text-[#0F2878] font-heading font-black text-[10px] sm:text-xs shadow-lg border border-white/60 disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
+                                        🎯 QUAY THƯỞNG
+                                    </button>
+                                </div>
 
-  <script>
-    (function initHisea5DigitApp() {
-      const STORAGE_KEY = 'hisea_lucky_5digit_phone_v1';
+                                <!-- CỘT 4 -->
+                                <div class="flex flex-col items-center">
+                                    <div id="slotWindow3" class="slot-reel-window w-full rounded-2xl border-4 border-[#F3C65F]">
+                                        <div id="slotStrip3" class="slot-reel-strip font-heading font-black text-4xl sm:text-6xl text-[#14369B] select-none"></div>
+                                        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-red-500/15 pointer-events-none"></div>
+                                    </div>
+                                    <button type="button" id="spinDigitBtn3"
+                                        class="mt-3 w-full py-2.5 px-1 rounded-xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#D99B26] hover:brightness-105 active:scale-95 text-[#0F2878] font-heading font-black text-[10px] sm:text-xs shadow-lg border border-white/60 disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
+                                        🎯 QUAY THƯỞNG
+                                    </button>
+                                </div>
 
-      // State
-      let participants = []; // { id, code5, fullPhone, maskedPhone, name }
-      let winnersHistory = [];
-      let currentMode = 'slot'; // 'slot' | 'wheel'
-      let soundEnabled = true;
-      let spinDurationSec = 5;
+                                <!-- CỘT 5 -->
+                                <div class="flex flex-col items-center">
+                                    <div id="slotWindow4" class="slot-reel-window w-full rounded-2xl border-4 border-[#F3C65F]">
+                                        <div id="slotStrip4" class="slot-reel-strip font-heading font-black text-4xl sm:text-6xl text-[#14369B] select-none"></div>
+                                        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-red-500/15 pointer-events-none"></div>
+                                    </div>
+                                    <button type="button" id="spinDigitBtn4"
+                                        class="mt-3 w-full py-2.5 px-1 rounded-xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#D99B26] hover:brightness-105 active:scale-95 text-[#0F2878] font-heading font-black text-[10px] sm:text-xs shadow-lg border border-white/60 disabled:opacity-45 disabled:cursor-not-allowed transition cursor-pointer">
+                                        🎯 QUAY THƯỞNG
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
-      // Slot 5-digit sequential state
-      const REEL_COUNT = 5;
-      const LOOP_DIGITS = 30; // 3 full cycles of 0..9 per reel
-      let reelDigits = [0, 0, 0, 0, 0];
-      let reelLocked = [false, false, false, false, false];
-      let reelSpinning = [false, false, false, false, false];
-      let targetEntryForCurrentRound = null;
+                        <!-- Bảng LED hiển thị trạng thái & tên khách hàng khi đủ 5 số -->
+                        <div class="mt-4 p-3.5 rounded-2xl bg-[#071238] border border-blue-400/30 text-center">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-0.5">
+                                Kết quả đối chiếu 5 số cuối SĐT dự thưởng
+                            </div>
+                            <div id="slotLiveCustomerName" class="font-heading font-extrabold text-sm sm:text-lg text-[#F3C65F] truncate">
+                                Bấm "QUAY THƯỞNG" hoặc phím Space để bắt đầu...
+                            </div>
+                        </div>
 
-      // Wheel state
-      let wheelAngle = 0;
-      let isWheelSpinning = false;
+                        <!-- Hàng nút quay tự động cả 5 số & Đặt lại 0-0-0-0-0 -->
+                        <div class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <button type="button" id="slotAutoSpinAllBtn"
+                                class="spin-btn-pulse w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-b from-[#FFF3C4] via-[#F3C65F] to-[#C88A1E] border-2 border-white text-[#0F2878] font-heading font-black text-xs sm:text-sm tracking-wider shadow-2xl hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center gap-2">
+                                <span>🎰 QUAY CẢ 5 SỐ</span>
+                            </button>
+                            <button type="button" id="slotResetBtn"
+                                class="w-full sm:w-auto py-3.5 px-5 rounded-2xl bg-white/12 hover:bg-white/20 border border-white/25 text-white font-heading font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-1.5">
+                                <span>↺ Đặt lại 0-0-0-0-0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-      // Audio Context
-      let audioCtx = null;
-      function ensureAudio() {
-        if (!soundEnabled) return null;
-        if (!audioCtx) {
-          const Ctx = window.AudioContext || window.webkitAudioContext;
-          if (Ctx) audioCtx = new Ctx();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume().catch(() => {});
-        }
-        return audioCtx;
-      }
-
-      function playTickSound(freq = 620) {
-        const ctx = ensureAudio();
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(0.06, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.045);
-      }
-
-      function playWinFanfare() {
-        const ctx = ensureAudio();
-        if (!ctx) return;
-        const notes = [523.25, 659.25, 783.99, 1046.5];
-        notes.forEach((n, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          const start = ctx.currentTime + idx * 0.11;
-          osc.frequency.setValueAtTime(n, start);
-          gain.gain.setValueAtTime(0.14, start);
-          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.45);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(start);
-          osc.stop(start + 0.45);
-        });
-      }
-
-      // Normalize Phone & Extract Last 5 Digits
-      function extractPhoneAndLast5(rawToken) {
-        let digits = String(rawToken || '').replace(/\D/g, '');
-        if (!digits) return null;
-        if (digits.startsWith('84') && digits.length >= 10) {
-          digits = '0' + digits.slice(2);
-        }
-        if (digits.length < 5) {
-          digits = digits.padStart(5, '0');
-        }
-        const code5 = digits.slice(-5);
-        const maskedPhone = digits.length >= 7
-          ? digits.slice(0, 3) + '***' + digits.slice(-4)
-          : '***' + code5;
-        return {
-          code5,
-          fullPhone: digits,
-          maskedPhone
-        };
-      }
-
-      function parseParticipantLines(text) {
-        const lines = String(text || '').split(/\r?\n/);
-        const parsed = [];
-        lines.forEach((line, idx) => {
-          const trimmed = line.trim();
-          if (!trimmed) return;
-
-          // Match phone-like number sequence (at least 5 digits, allowing spaces/dots/dashes)
-          const phoneMatch = trimmed.match(/(\+?\d[\d\s.\-]{4,}\d|\d{5,})/);
-          if (!phoneMatch) return;
-
-          const phoneInfo = extractPhoneAndLast5(phoneMatch[0]);
-          if (!phoneInfo) return;
-
-          let namePart = trimmed.replace(phoneMatch[0], '').replace(/^[\s\-–|:;,]+|[\s\-–|:;,]+$/g, '').trim();
-          if (!namePart) {
-            namePart = `Khách hàng #${idx + 1}`;
-          }
-
-          parsed.push({
-            id: `${Date.now()}_${idx}_${Math.random().toString(36).slice(2, 6)}`,
-            code5: phoneInfo.code5,
-            fullPhone: phoneInfo.fullPhone,
-            maskedPhone: phoneInfo.maskedPhone,
-            name: namePart
-          });
-        });
-        return parsed;
-      }
-
-      // Persistence
-      function saveState() {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            participants,
-            winnersHistory,
-            prizeTitle: document.getElementById('prizeTitleInput').value,
-            sheetUrl: document.getElementById('googleSheetUrlInput').value,
-            rawText: document.getElementById('rawParticipantsInput').value,
-            spinDurationSec,
-            autoRemove: document.getElementById('autoRemoveWinnerChk').checked,
-            maskPhone: document.getElementById('maskPhoneLiveChk').checked
-          }));
-        } catch (e) {}
-      }
-
-      function loadState() {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return;
-          const data = JSON.parse(raw);
-          if (Array.isArray(data.participants)) participants = data.participants;
-          if (Array.isArray(data.winnersHistory)) winnersHistory = data.winnersHistory;
-          if (data.prizeTitle) document.getElementById('prizeTitleInput').value = data.prizeTitle;
-          if (data.sheetUrl) document.getElementById('googleSheetUrlInput').value = data.sheetUrl;
-          if (data.rawText) document.getElementById('rawParticipantsInput').value = data.rawText;
-          if (data.spinDurationSec) {
-            spinDurationSec = Math.max(1, Math.min(60, Number(data.spinDurationSec) || 5));
-            document.getElementById('spinDurationInput').value = spinDurationSec;
-          }
-          if (typeof data.autoRemove === 'boolean') {
-            document.getElementById('autoRemoveWinnerChk').checked = data.autoRemove;
-          }
-          if (typeof data.maskPhone === 'boolean') {
-            document.getElementById('maskPhoneLiveChk').checked = data.maskPhone;
-          }
-        } catch (e) {}
-      }
-
-      // Render Participant Preview List
-      function renderParticipantsUI() {
-        const container = document.getElementById('parsedListContainer');
-        document.getElementById('participantCountPill').textContent = `${participants.length} người`;
-        document.getElementById('winnerCountBadge').textContent = winnersHistory.length;
-
-        if (participants.length === 0) {
-          container.innerHTML = `<div class="p-4 text-center text-xs text-blue-300/60">Chưa có dữ liệu. Hãy tải từ Google Sheet hoặc dán danh sách SĐT ở trên.</div>`;
-        } else {
-          const maskLive = document.getElementById('maskPhoneLiveChk').checked;
-          container.innerHTML = participants.map((p, i) => `
-            <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs hover:bg-white/5">
-              <div class="min-w-0">
-                <div class="font-bold text-white truncate">${i + 1}. ${escapeHtml(p.name)}</div>
-                <div class="text-[11px] text-blue-200/70">SĐT: ${maskLive ? p.maskedPhone : p.fullPhone}</div>
-              </div>
-              <span class="px-2.5 py-1 rounded-lg bg-[#F5C351]/20 border border-[#F5C351]/40 text-[#F5C351] font-black tracking-wider shrink-0">
-                ${p.code5}
-              </span>
+                <!-- Thanh thông tin nhanh bên dưới sân khấu quay -->
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-blue-100">
+                    <div class="px-4 py-1.5 rounded-full bg-white/10 border border-white/15">
+                        Đang tham gia: <strong id="entryCountBadge" class="text-[#F3C65F]">15</strong> SĐT dự thưởng
+                    </div>
+                    <div id="spaceHintBadge" class="px-4 py-1.5 rounded-full bg-white/10 border border-white/15">
+                        Bấm <strong>QUAY</strong> hoặc phím <strong>Space</strong>
+                    </div>
+                </div>
             </div>
-          `).join('');
-        }
-        drawWheelCanvas();
-      }
 
-      function escapeHtml(str) {
-        return String(str).replace(/[&<>"']/g, m => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[m]));
-      }
+            <!-- CỘT PHẢI: BẢNG QUẢN LÝ DANH SÁCH & LỊCH SỬ TRÚNG GIẢI -->
+            <div id="controlColumn" class="lg:col-span-5 bg-white text-slate-800 rounded-3xl shadow-2xl border border-blue-200/60 overflow-hidden flex flex-col h-[640px]">
+                <!-- Tabs chuyển đổi -->
+                <div class="grid grid-cols-2 border-b border-slate-200 bg-slate-50">
+                    <button type="button" id="tabEntriesBtn"
+                        class="py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-[#14369B] bg-white border-b-2 border-[#006CC2] flex items-center justify-center gap-2 cursor-pointer">
+                        <span>📋 Danh sách quay</span>
+                        <span id="tabEntryCount" class="px-2 py-0.5 rounded-full bg-blue-100 text-[#14369B] text-xs font-extrabold">15</span>
+                    </button>
+                    <button type="button" id="tabWinnersBtn"
+                        class="py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-slate-500 hover:text-[#14369B] flex items-center justify-center gap-2 cursor-pointer">
+                        <span>🏆 Đã trúng giải</span>
+                        <span id="tabWinnersCount" class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">0</span>
+                    </button>
+                </div>
 
-      // Google Sheet Fetcher
-      async function syncFromGoogleSheet() {
-        const urlInput = document.getElementById('googleSheetUrlInput').value.trim();
-        const statusEl = document.getElementById('sheetSyncStatus');
-        if (!urlInput) {
-          statusEl.textContent = '⚠️ Vui lòng dán đường dẫn Google Sheet trước.';
-          statusEl.className = 'mt-1.5 text-[11px] text-amber-300';
-          return;
-        }
+                <!-- NỘI DUNG TAB 1: DANH SÁCH QUAY -->
+                <div id="entriesPanel" class="flex-1 flex flex-col overflow-hidden">
+                    <!-- Thanh công cụ -->
+                    <div class="p-3.5 border-b border-slate-200 bg-white space-y-2.5">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button type="button" id="openSyncModalBtn"
+                                class="flex-1 min-w-[155px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <span>🔄 Nạp từ Google Sheet</span>
+                            </button>
+                            <button type="button" id="shuffleBtn" title="Trộn ngẫu nhiên thứ tự"
+                                class="px-2.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#14369B] text-xs font-bold border border-blue-200 transition cursor-pointer">
+                                🔀 Trộn
+                            </button>
+                            <button type="button" id="sortBtn" title="Sắp xếp A-Z / 00000 → 99999"
+                                class="px-2.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#14369B] text-xs font-bold border border-blue-200 transition cursor-pointer">
+                                🔢 A-Z
+                            </button>
+                            <button type="button" id="loadSampleBtn" title="Nạp lại 15 khách hàng mẫu"
+                                class="px-2.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 transition cursor-pointer">
+                                ✨ Mẫu
+                            </button>
+                            <button type="button" id="clearListBtn" title="Xóa tất cả"
+                                class="px-2.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold border border-red-200 transition cursor-pointer">
+                                🗑️ Xóa
+                            </button>
+                        </div>
 
-        const match = urlInput.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-        if (!match) {
-          statusEl.textContent = '⚠️ Link Google Sheet không hợp lệ.';
-          statusEl.className = 'mt-1.5 text-[11px] text-red-300';
-          return;
-        }
+                        <!-- Tìm kiếm nhanh -->
+                        <div class="relative">
+                            <input type="text" id="searchEntryInput"
+                                placeholder="🔍 Tìm nhanh 5 số cuối (vd: 34567) hoặc tên khách hàng..."
+                                class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-[#006CC2]" />
+                        </div>
+                    </div>
 
-        const sheetId = match[1];
-        const gidMatch = urlInput.match(/[?&#]gid=([0-9]+)/);
-        const gid = gidMatch ? gidMatch[1] : '0';
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+                    <!-- Ô nhập liệu & dán trực tiếp từ Sheet/Excel -->
+                    <div class="flex-1 flex flex-col p-4 overflow-hidden">
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                            <span>Tự cắt <strong class="text-[#14369B]">5 số cuối SĐT - Họ tên</strong> (Dán trực tiếp từ Sheet)</span>
+                            <button type="button" id="cleanFormatBtn" class="text-[#006CC2] hover:underline font-bold cursor-pointer">
+                                🧹 Lọc 5 số cuối SĐT
+                            </button>
+                        </div>
+                        <textarea id="entriesTextarea"
+                            placeholder="Nhập hoặc dán (Ctrl+V) trực tiếp SĐT & Tên từ Google Sheet / Excel...&#10;Ví dụ:&#10;0901234567 - Nguyễn Văn An&#10;0912888999 - Trần Thị Bình"
+                            class="flex-1 w-full p-3.5 rounded-xl border border-slate-300 bg-slate-50/70 focus:bg-white font-mono text-xs sm:text-sm leading-relaxed text-slate-800 focus:outline-none focus:border-[#006CC2] resize-none"></textarea>
+                    </div>
+                </div>
 
-        statusEl.textContent = '⏳ Đang tải dữ liệu từ Google Sheet...';
-        statusEl.className = 'mt-1.5 text-[11px] text-blue-200';
+                <!-- NỘI DUNG TAB 2: LỊCH SỬ TRÚNG GIẢI -->
+                <div id="winnersPanel" class="hidden flex-1 flex flex-col overflow-hidden">
+                    <div class="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                        <span class="text-xs font-bold text-slate-600">Danh sách khách hàng đã trúng thưởng</span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="copyWinnersBtn"
+                                class="px-3 py-1.5 rounded-lg bg-[#14369B] hover:bg-blue-900 text-white text-xs font-bold cursor-pointer">
+                                📋 Sao chép
+                            </button>
+                            <button type="button" id="clearWinnersBtn"
+                                class="px-2.5 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold cursor-pointer">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                    <div id="winnersListContainer" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2.5">
+                        <div class="text-center py-12 text-slate-400 text-sm">Chưa có ai trúng giải trong phiên quay này.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-        try {
-          const res = await fetch(csvUrl);
-          if (!res.ok) throw new Error('Không thể truy cập Sheet');
-          const csvText = await res.text();
-          const rows = csvText.split(/\r?\n/).filter(r => r.trim());
-          const formattedLines = [];
+    <!-- POPUP VINH DANH NGƯỜI TRÚNG GIẢI -->
+    <div id="winnerModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white text-slate-800 max-w-md w-full rounded-3xl p-6 sm:p-8 text-center shadow-2xl border-4 border-[#F3C65F] relative overflow-hidden">
+            <div class="text-5xl mb-2">🎉</div>
+            <div id="modalPrizeName" class="text-xs font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full inline-block mb-3">
+                GIẢI ĐẶC BIỆT: 1 NĂM HẢI SẢN TẦN CANH 25.000.000Đ
+            </div>
+            <h2 class="font-heading font-black text-xl sm:text-2xl text-[#14369B]">CHÚC MỪNG KHÁCH HÀNG TRÚNG GIẢI!</h2>
 
-          rows.forEach((row, idx) => {
-            const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
-            // Skip header row if it doesn't contain a 5+ digit number
-            if (idx === 0 && !/\d{5,}/.test(row)) return;
+            <div class="my-5 p-5 rounded-2xl bg-[#F0F6FC] border-2 border-dashed border-[#006CC2]">
+                <div class="text-xs font-bold text-[#006CC2] uppercase tracking-widest">5 Số Cuối Điện Thoại May Mắn</div>
+                <div id="modalWinnerCode" class="font-heading font-black text-4xl sm:text-5xl text-[#D93025] tracking-widest my-2">
+                    34567
+                </div>
+                <div id="modalWinnerName" class="font-heading font-extrabold text-lg sm:text-xl text-[#14369B]">
+                    Nguyễn Văn An
+                </div>
+            </div>
 
-            let foundPhone = '';
-            let foundName = '';
-            cols.forEach(c => {
-              const cleanDigits = c.replace(/\D/g, '');
-              if (!foundPhone && cleanDigits.length >= 5) {
-                foundPhone = c;
-              } else if (!foundName && c && isNaN(Number(c))) {
-                foundName = c;
-              }
+            <div class="flex flex-col sm:flex-row gap-2.5 mt-4">
+                <button type="button" id="removeWinnerBtn"
+                    class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#16369E] to-[#006EC4] hover:opacity-95 text-white font-heading font-bold text-xs sm:text-sm shadow-lg cursor-pointer">
+                    ✅ Loại SĐT này & Tiếp tục quay
+                </button>
+                <button type="button" id="keepWinnerBtn"
+                    class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm cursor-pointer">
+                    Giữ lại & Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ĐỒNG BỘ GOOGLE SHEET -->
+    <div id="syncSheetModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white text-slate-800 max-w-xl w-full rounded-2xl p-6 shadow-2xl border border-slate-200">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <h3 class="font-heading font-extrabold text-base sm:text-lg text-[#14369B]">🔄 Nạp Danh Sách SĐT Dự Thưởng HISEA</h3>
+                <button type="button" id="closeSyncModalBtn" class="text-slate-400 hover:text-slate-700 text-xl font-bold cursor-pointer">✕</button>
+            </div>
+
+            <!-- Tabs chọn 2 cách nạp -->
+            <div class="grid grid-cols-2 gap-2 mt-4 p-1 bg-slate-100 rounded-xl">
+                <button type="button" id="syncModeLinkBtn"
+                    class="py-2 px-3 rounded-lg bg-white text-[#14369B] font-heading font-bold text-xs shadow-sm transition cursor-pointer">
+                    🌐 Cách 1: Tải từ Link Google Sheet
+                </button>
+                <button type="button" id="syncModePasteBtn"
+                    class="py-2 px-3 rounded-lg text-slate-600 hover:text-[#14369B] font-heading font-bold text-xs transition cursor-pointer">
+                    📋 Cách 2: Copy & Dán từ Sheet
+                </button>
+            </div>
+
+            <!-- CÁCH 1: TẢI QUA LINK GOOGLE SHEET -->
+            <div id="syncModeLinkBox" class="mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
+                <div>
+                    <label class="block font-bold text-[#14369B] mb-1">Đường dẫn Google Sheet hoặc Link Apps Script JSON:</label>
+                    <input type="url" id="googleSheetUrlInput"
+                        value="https://docs.google.com/spreadsheets/d/1C2elD4OiK0wvR8QmnIM4d2ndgzgxb7NVRMR6SE21HY0/edit?gid=1693465418#gid=1693465418"
+                        placeholder="Dán link Google Sheet hoặc link Web App Apps Script..."
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-[#006CC2]">
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-slate-700 space-y-1">
+                    <div class="font-bold text-[#14369B]">⚠️ Lưu ý để tải tự động không bị chặn quyền truy cập:</div>
+                    <div>• Mở file Google Sheet → bấm <strong>Chia sẻ (Share)</strong> → chuyển quyền truy cập chung thành <strong>"Bất kỳ ai có đường liên kết (Người xem)"</strong>.</div>
+                    <div>• Hệ thống sẽ tự động tìm cột <strong>Số điện thoại</strong> và cắt lấy <strong>5 số cuối</strong> ghép với <strong>Họ và tên</strong>.</div>
+                </div>
+            </div>
+
+            <!-- CÁCH 2: COPY & DÁN TRỰC TIẾP -->
+            <div id="syncModePasteBox" class="hidden mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
+                <div>
+                    <label class="block font-bold text-[#14369B] mb-1">Bôi đen các cột trên Google Sheet / Excel (STT, Tên, SĐT, Email...) rồi dán vào đây:</label>
+                    <textarea id="pasteRawSheetInput" rows="6"
+                        placeholder="Ví dụ dán trực tiếp từ Google Sheet:&#10;1	Nguyễn Văn An	0901234567	an@gmail.com&#10;2	Trần Thị Bình	0912888999	binh@gmail.com"
+                        class="w-full p-3 rounded-xl border border-slate-300 font-mono text-xs focus:outline-none focus:border-[#006CC2]"></textarea>
+                </div>
+                <div class="text-[11px] text-slate-500">
+                    Hệ thống tự động nhận diện số điện thoại và cắt lấy <strong>5 số cuối</strong> cùng <strong>Họ và tên</strong> khách hàng.
+                </div>
+            </div>
+
+            <div class="mt-5 flex items-center justify-end gap-2.5">
+                <button type="button" id="cancelSyncBtn" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm cursor-pointer">
+                    Hủy
+                </button>
+                <button type="button" id="confirmSyncBtn" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow cursor-pointer">
+                    ⬇️ Nạp danh sách 5 số cuối SĐT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas hiệu ứng pháo giấy -->
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Toast thông báo -->
+    <div id="toastBox" class="fixed bottom-5 left-5 z-50 hidden max-w-md bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-white/15 text-xs sm:text-sm font-medium flex items-center gap-2.5">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">Thông báo</span>
+    </div>
+
+    <script>
+        function initHiseaLivestreamApp() {
+            // ==========================================
+            // 1. DỮ LIỆU MẪU & TRẠNG THÁI LƯU TRỮ (5 SỐ CUỐI SĐT)
+            // ==========================================
+            const STORAGE_KEYS = {
+                ENTRIES: 'hisea_wheel_entries_5digit_v1',
+                WINNERS: 'hisea_wheel_winners_5digit_v1',
+                PRIZE: 'hisea_wheel_prize_v2',
+                SHEET_URL: 'hisea_wheel_sheet_url_v2',
+                DURATION: 'hisea_wheel_duration_v2'
+            };
+
+            const DEFAULT_SAMPLE_DATA = [
+                "34567 - Nguyễn Văn An",
+                "88999 - Trần Thị Bình",
+                "54321 - Lê Hoàng Nam",
+                "12888 - Phạm Minh Tuấn",
+                "67105 - Đặng Thu Thảo",
+                "90134 - Vũ Quốc Bảo",
+                "45176 - Bùi Lan Anh",
+                "78215 - Hoàng Gia Huy",
+                "33268 - Ngô Thanh Trúc",
+                "91312 - Đỗ Quang Vinh",
+                "64389 - Lý Mỹ Duyên",
+                "20450 - Trương Tấn Tài",
+                "85521 - Phan Ngọc Mai",
+                "19678 - Huỳnh Phúc Thịnh",
+                "72899 - Võ Kim Ngân"
+            ];
+
+            const SLICE_COLORS = [
+                { bg: '#14369B', text: '#F3C65F' },
+                { bg: '#FFFFFF', text: '#14369B' },
+                { bg: '#006EC4', text: '#FFFFFF' },
+                { bg: '#F3C65F', text: '#0F2878' }
+            ];
+
+            function getSlicePalette(index, total) {
+                if (total > 1 && index === total - 1 && (index % SLICE_COLORS.length) === 0) {
+                    return SLICE_COLORS[3];
+                }
+                return SLICE_COLORS[index % SLICE_COLORS.length];
+            }
+
+            let entries = [...DEFAULT_SAMPLE_DATA];
+            let winnersHistory = [];
+            let currentWinner = null;
+            let currentAngle = 0;
+            let isSpinning = false;
+            let soundEnabled = true;
+            let isLiveMode = false;
+            let activeSpinMode = 'wheel';
+
+            const DIGIT_COLS = 5;
+            let slotStepState = {
+                targetEntryRaw: null,
+                targetDigits: [0, 0, 0, 0, 0],
+                locked: [false, false, false, false, false],
+                spinningCol: [false, false, false, false, false]
+            };
+
+            const canvas = document.getElementById('wheelCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const spinBtn = document.getElementById('spinBtn');
+            const entriesTextarea = document.getElementById('entriesTextarea');
+            const entryCountBadge = document.getElementById('entryCountBadge');
+            const tabEntryCount = document.getElementById('tabEntryCount');
+            const tabWinnersCount = document.getElementById('tabWinnersCount');
+            const searchEntryInput = document.getElementById('searchEntryInput');
+            const prizeTitleInput = document.getElementById('prizeTitleInput');
+            const spinDurationInput = document.getElementById('spinDurationInput');
+
+            function getConfiguredDurationMs(defaultSec = 5) {
+                if (!spinDurationInput) return defaultSec * 1000;
+                const val = parseFloat(spinDurationInput.value);
+                if (isNaN(val) || val < 1) return 1000;
+                if (val > 60) return 60000;
+                return Math.round(val * 1000);
+            }
+
+            function savePersistedState() {
+                try {
+                    localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+                    localStorage.setItem(STORAGE_KEYS.WINNERS, JSON.stringify(winnersHistory));
+                    localStorage.setItem(STORAGE_KEYS.PRIZE, prizeTitleInput.value);
+                    if (spinDurationInput) {
+                        localStorage.setItem(STORAGE_KEYS.DURATION, spinDurationInput.value);
+                    }
+                } catch (e) {}
+            }
+
+            function loadPersistedState() {
+                try {
+                    const savedEntries = localStorage.getItem(STORAGE_KEYS.ENTRIES);
+                    if (savedEntries) {
+                        const parsed = JSON.parse(savedEntries);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            entries = parsed;
+                        }
+                    }
+                    const savedWinners = localStorage.getItem(STORAGE_KEYS.WINNERS);
+                    if (savedWinners) {
+                        const parsedW = JSON.parse(savedWinners);
+                        if (Array.isArray(parsedW)) {
+                            winnersHistory = parsedW;
+                        }
+                    }
+                    const savedPrize = localStorage.getItem(STORAGE_KEYS.PRIZE);
+                    if (savedPrize && savedPrize.trim()) {
+                        prizeTitleInput.value = savedPrize;
+                    }
+                    const savedUrl = localStorage.getItem(STORAGE_KEYS.SHEET_URL);
+                    if (savedUrl && savedUrl.trim()) {
+                        const urlInput = document.getElementById('googleSheetUrlInput');
+                        if (urlInput) urlInput.value = savedUrl;
+                    }
+                    const savedDuration = localStorage.getItem(STORAGE_KEYS.DURATION);
+                    if (savedDuration && spinDurationInput) {
+                        spinDurationInput.value = savedDuration;
+                    }
+                } catch (e) {}
+            }
+
+            function buildWheelLedRing() {
+                const ring = document.getElementById('wheelLedRing');
+                if (!ring) return;
+                ring.innerHTML = '';
+                const ledCount = 24;
+                for (let i = 0; i < ledCount; i++) {
+                    const angleDeg = (360 / ledCount) * i;
+                    const rad = (angleDeg * Math.PI) / 180;
+                    const x = 50 + 48.2 * Math.cos(rad);
+                    const y = 50 + 48.2 * Math.sin(rad);
+                    const dot = document.createElement('span');
+                    dot.className = `absolute w-2.5 h-2.5 rounded-full bg-white -translate-x-1/2 -translate-y-1/2 ${i % 2 === 0 ? 'led-dot-a' : 'led-dot-b'}`;
+                    dot.style.left = `${x}%`;
+                    dot.style.top = `${y}%`;
+                    ring.appendChild(dot);
+                }
+            }
+
+            // ==========================================
+            // 3. KHỞI TẠO & ĐIỀU KHIỂN 5 GUỒNG SỐ CUỘN XOAY DỌC LIÊN TỤC
+            // ==========================================
+            const REEL_CELL_HEIGHT = 160;
+            const REEL_CYCLE_HEIGHT = REEL_CELL_HEIGHT * 10;
+
+            function initSlotReels() {
+                for (let col = 0; col < DIGIT_COLS; col++) {
+                    const stripEl = document.getElementById(`slotStrip${col}`);
+                    if (!stripEl) continue;
+                    let cellsHtml = '';
+                    for (let loop = 0; loop < 2; loop++) {
+                        for (let d = 0; d <= 9; d++) {
+                            cellsHtml += `<div class="slot-reel-cell">${d}</div>`;
+                        }
+                    }
+                    stripEl.innerHTML = cellsHtml;
+                    stripEl.style.transform = 'translate3d(0, 0px, 0)';
+                }
+            }
+
+            function resetSlotMachineState(showMessage = false) {
+                if (slotStepState.spinningCol.some(Boolean)) {
+                    showToast('Đang có guồng số đang quay, vui lòng đợi dừng hẳn!', '⏳');
+                    return;
+                }
+                slotStepState = {
+                    targetEntryRaw: null,
+                    targetDigits: [0, 0, 0, 0, 0],
+                    locked: [false, false, false, false, false],
+                    spinningCol: [false, false, false, false, false]
+                };
+
+                for (let col = 0; col < DIGIT_COLS; col++) {
+                    const stripEl = document.getElementById(`slotStrip${col}`);
+                    const btn = document.getElementById(`spinDigitBtn${col}`);
+                    if (stripEl) {
+                        stripEl.style.transform = 'translate3d(0, 0px, 0)';
+                        stripEl.classList.remove('slot-digit-locked');
+                    }
+                    if (btn) btn.disabled = false;
+                }
+
+                const autoBtn = document.getElementById('slotAutoSpinAllBtn');
+                if (autoBtn) autoBtn.disabled = false;
+
+                const liveNameBox = document.getElementById('slotLiveCustomerName');
+                if (liveNameBox) {
+                    liveNameBox.innerText = 'Bấm "QUAY THƯỞNG" hoặc phím Space để bắt đầu...';
+                }
+
+                if (showMessage) {
+                    showToast('Đã đặt lại 5 guồng số về 0 - 0 - 0 - 0 - 0!', '↺');
+                }
+            }
+
+            function ensureSlotTargetPicked() {
+                if (slotStepState.targetEntryRaw) return true;
+                if (entries.length === 0) {
+                    showToast('Danh sách đang trống! Vui lòng nạp SĐT dự thưởng trước khi quay.', '⚠️');
+                    return false;
+                }
+                const winnerIndex = Math.floor(Math.random() * entries.length);
+                const winnerRaw = entries[winnerIndex];
+                const parsed = parseEntryLabel(winnerRaw);
+                const digitsOnly = parsed.code.replace(/\D/g, '').padStart(5, '0').slice(-5);
+
+                slotStepState.targetEntryRaw = winnerRaw;
+                slotStepState.targetDigits = [
+                    parseInt(digitsOnly[0], 10) || 0,
+                    parseInt(digitsOnly[1], 10) || 0,
+                    parseInt(digitsOnly[2], 10) || 0,
+                    parseInt(digitsOnly[3], 10) || 0,
+                    parseInt(digitsOnly[4], 10) || 0
+                ];
+                return true;
+            }
+
+            function spinSingleSlotColumn(colIndex, customDurationMs = null, customLoops = null) {
+                if (slotStepState.spinningCol[colIndex]) return;
+                if (slotStepState.locked[colIndex]) {
+                    showToast(`Cột số này đã dừng ở số ${slotStepState.targetDigits[colIndex]}. Bấm "Đặt lại 0-0-0-0-0" nếu muốn quay lại!`, 'ℹ️');
+                    return;
+                }
+                if (!ensureSlotTargetPicked()) return;
+
+                const durationMs = customDurationMs !== null ? customDurationMs : getConfiguredDurationMs(5);
+                const loopsCount = customLoops !== null ? customLoops : Math.max(3, Math.round(durationMs / 450));
+
+                slotStepState.spinningCol[colIndex] = true;
+                isSpinning = true;
+
+                const btn = document.getElementById(`spinDigitBtn${colIndex}`);
+                const autoBtn = document.getElementById('slotAutoSpinAllBtn');
+                if (btn) btn.disabled = true;
+                if (autoBtn) autoBtn.disabled = true;
+
+                const liveNameBox = document.getElementById('slotLiveCustomerName');
+                if (liveNameBox) {
+                    liveNameBox.innerText = `Đang quay thưởng số thứ ${colIndex + 1}...`;
+                }
+
+                const stripEl = document.getElementById(`slotStrip${colIndex}`);
+                const targetDigit = slotStepState.targetDigits[colIndex];
+                const totalDistancePx = (loopsCount * 10 + targetDigit) * REEL_CELL_HEIGHT;
+                const startTime = performance.now();
+                let lastPassedCell = 0;
+
+                function easeOutQuart(t) {
+                    return 1 - Math.pow(1 - t, 4);
+                }
+
+                function animateCol(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / durationMs, 1);
+                    const eased = easeOutQuart(progress);
+                    const currentDist = eased * totalDistancePx;
+
+                    const wrappedOffset = currentDist % REEL_CYCLE_HEIGHT;
+                    if (stripEl) {
+                        stripEl.style.transform = `translate3d(0, -${wrappedOffset.toFixed(2)}px, 0)`;
+                    }
+
+                    const passedCell = Math.floor(currentDist / REEL_CELL_HEIGHT);
+                    if (passedCell !== lastPassedCell) {
+                        lastPassedCell = passedCell;
+                        playTickSound();
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateCol);
+                    } else {
+                        const exactFinalOffset = targetDigit * REEL_CELL_HEIGHT;
+                        if (stripEl) {
+                            stripEl.style.transform = `translate3d(0, -${exactFinalOffset}px, 0)`;
+                            const targetCell = stripEl.children[targetDigit];
+                            if (targetCell) {
+                                targetCell.classList.add('slot-digit-locked');
+                                setTimeout(() => targetCell.classList.remove('slot-digit-locked'), 450);
+                            }
+                        }
+
+                        slotStepState.spinningCol[colIndex] = false;
+                        slotStepState.locked[colIndex] = true;
+                        playTickSound();
+
+                        const anyStillSpinning = slotStepState.spinningCol.some(Boolean);
+                        if (!anyStillSpinning) {
+                            isSpinning = false;
+                        }
+
+                        const allLocked = slotStepState.locked.every(Boolean);
+                        if (allLocked) {
+                            const winnerRaw = slotStepState.targetEntryRaw;
+                            const parsed = parseEntryLabel(winnerRaw);
+                            if (liveNameBox) {
+                                liveNameBox.innerText = `🎉 ${parsed.code} - ${parsed.name}`;
+                            }
+                            setTimeout(() => {
+                                handleSpinFinished(winnerRaw);
+                            }, 350);
+                        } else {
+                            const revealedStr = slotStepState.targetDigits
+                                .map((d, idx) => (slotStepState.locked[idx] ? d : '?'))
+                                .join(' - ');
+                            if (liveNameBox) {
+                                liveNameBox.innerText = `Đã mở: [ ${revealedStr} ] • Tiếp theo: bấm "QUAY THƯỞNG"`;
+                            }
+                            if (!anyStillSpinning && autoBtn) {
+                                autoBtn.disabled = false;
+                            }
+                        }
+                    }
+                }
+
+                requestAnimationFrame(animateCol);
+            }
+
+            function spinAllSlotColumnsAuto() {
+                if (slotStepState.spinningCol.some(Boolean)) return;
+                if (slotStepState.locked.every(Boolean)) {
+                    resetSlotMachineState(false);
+                }
+                if (!ensureSlotTargetPicked()) return;
+
+                const totalMs = getConfiguredDurationMs(5);
+                const ratios = [0.45, 0.58, 0.72, 0.86, 1.0];
+                for (let col = 0; col < DIGIT_COLS; col++) {
+                    if (!slotStepState.locked[col]) {
+                        const colDuration = Math.max(700, Math.round(totalMs * ratios[col]));
+                        const colLoops = Math.max(2, Math.round(colDuration / 450));
+                        spinSingleSlotColumn(col, colDuration, colLoops);
+                    }
+                }
+            }
+
+            // ==========================================
+            // 4. ÂM THANH & PHÁO GIẤY
+            // ==========================================
+            let audioCtx = null;
+            function getAudioCtx() {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) audioCtx = new AudioContext();
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                return audioCtx;
+            }
+
+            function playTickSound() {
+                if (!soundEnabled) return;
+                const ac = getAudioCtx();
+                if (!ac) return;
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(640, ac.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(140, ac.currentTime + 0.045);
+                gain.gain.setValueAtTime(0.18, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.045);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start();
+                osc.stop(ac.currentTime + 0.045);
+            }
+
+            function playWinFanfare() {
+                if (!soundEnabled) return;
+                const ac = getAudioCtx();
+                if (!ac) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                notes.forEach((freq, idx) => {
+                    const osc = ac.createOscillator();
+                    const gain = ac.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ac.currentTime + idx * 0.1);
+                    gain.gain.setValueAtTime(0.22, ac.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + idx * 0.1 + 0.42);
+                    osc.connect(gain);
+                    gain.connect(ac.destination);
+                    osc.start(ac.currentTime + idx * 0.1);
+                    osc.stop(ac.currentTime + idx * 0.1 + 0.42);
+                });
+            }
+
+            function launchConfetti() {
+                const cCanvas = document.getElementById('confettiCanvas');
+                if (!cCanvas) return;
+                const cCtx = cCanvas.getContext('2d');
+                cCanvas.width = window.innerWidth;
+                cCanvas.height = window.innerHeight;
+
+                const colors = ['#F3C65F', '#EF4444', '#3B82F6', '#10B981', '#FFFFFF'];
+                const particles = Array.from({ length: 145 }, () => ({
+                    x: Math.random() * cCanvas.width,
+                    y: Math.random() * cCanvas.height - cCanvas.height,
+                    w: Math.random() * 10 + 6,
+                    h: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 4.2 + 2.5,
+                    speedX: Math.random() * 3 - 1.5,
+                    rot: Math.random() * 360,
+                    rotSpeed: Math.random() * 8 - 4
+                }));
+
+                let frame = 0;
+                function step() {
+                    frame++;
+                    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+                    particles.forEach(p => {
+                        p.y += p.speedY;
+                        p.x += p.speedX;
+                        p.rot += p.rotSpeed;
+                        cCtx.save();
+                        cCtx.translate(p.x, p.y);
+                        cCtx.rotate((p.rot * Math.PI) / 180);
+                        cCtx.fillStyle = p.color;
+                        cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        cCtx.restore();
+                    });
+                    if (frame < 165) {
+                        requestAnimationFrame(step);
+                    } else {
+                        cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            // ==========================================
+            // 5. ĐỒNG BỘ DANH SÁCH (CẮT 5 SỐ CUỐI SĐT) & VẼ VÒNG QUAY
+            // ==========================================
+            function extractLast5PhoneDigits(rawToken) {
+                let digits = String(rawToken || '').replace(/\D/g, '');
+                if (!digits) return '';
+                if (digits.startsWith('84') && digits.length >= 10) {
+                    digits = '0' + digits.slice(2);
+                }
+                if (digits.length < 5) return '';
+                return digits.slice(-5);
+            }
+
+            function normalizeSingleLineTo5DigitPhone(line) {
+                const trimmed = line.trim();
+                if (!trimmed) return null;
+
+                // Nếu dòng tách cột bằng Tab (dán từ Google Sheet / Excel)
+                if (trimmed.includes('\t')) {
+                    const cols = trimmed.split('\t').map(c => c.trim()).filter(Boolean);
+                    let last5 = '';
+                    let nameVal = '';
+                    for (let c = 0; c < cols.length; c++) {
+                        const cell = cols[c];
+                        const digitsOnly = cell.replace(/\D/g, '');
+                        if (!last5 && digitsOnly.length >= 5) {
+                            last5 = extractLast5PhoneDigits(cell);
+                        } else if (!nameVal && /[a-zA-ZÀ-ỹ]{2,}/.test(cell) && !cell.includes('@')) {
+                            nameVal = cell;
+                        }
+                    }
+                    if (last5) {
+                        return `${last5} - ${nameVal || 'Khách hàng'}`;
+                    }
+                    return null;
+                }
+
+                // Tìm chuỗi số điện thoại (5 chữ số trở lên, hỗ trợ dấu cách, chấm, gạch ngang, +84)
+                const phoneMatch = trimmed.match(/(\+?\d[\d\s.\-]{3,}\d|\d{5,})/);
+                if (phoneMatch) {
+                    const last5 = extractLast5PhoneDigits(phoneMatch[0]);
+                    if (last5) {
+                        const namePart = trimmed
+                            .replace(phoneMatch[0], '')
+                            .replace(/^[\s\-–|:;,]+|[\s\-–|:;,]+$/g, '')
+                            .replace(/\s+/g, ' ')
+                            .trim();
+                        return `${last5} - ${namePart || 'Khách hàng'}`;
+                    }
+                }
+                return trimmed;
+            }
+
+            function sanitizeRawLines(rawText) {
+                const lower = rawText.slice(0, 1500).toLowerCase();
+                if (
+                    lower.includes('<!doctype') ||
+                    lower.includes('<html') ||
+                    lower.includes('<script') ||
+                    lower.includes('object.defineproperty') ||
+                    lower.includes('__proto__') ||
+                    lower.includes('function(')
+                ) {
+                    showToast('Đã chặn nội dung mã nguồn HTML/JS không hợp lệ!', '⚠️');
+                    return entries;
+                }
+
+                const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                const result = [];
+                const seen = new Set();
+
+                for (const line of lines) {
+                    const formatted = normalizeSingleLineTo5DigitPhone(line);
+                    if (formatted && !seen.has(formatted)) {
+                        seen.add(formatted);
+                        result.push(formatted);
+                    }
+                }
+                return result;
+            }
+
+            function syncEntriesFromTextarea(autoFormat = false) {
+                const rawVal = entriesTextarea.value;
+                if (autoFormat) {
+                    const cleaned = sanitizeRawLines(rawVal);
+                    setTextareaFromEntries(cleaned);
+                    return;
+                }
+                const lines = rawVal
+                    .split(/\r?\n/)
+                    .map(l => l.trim())
+                    .filter(l => l.length > 0);
+                entries = lines;
+                entryCountBadge.innerText = entries.length;
+                tabEntryCount.innerText = entries.length;
+                savePersistedState();
+                drawWheel();
+            }
+
+            function setTextareaFromEntries(list) {
+                entries = list;
+                entriesTextarea.value = list.join('\n');
+                entryCountBadge.innerText = entries.length;
+                tabEntryCount.innerText = entries.length;
+                savePersistedState();
+                drawWheel();
+            }
+
+            function drawWheel() {
+                const size = canvas.width;
+                const center = size / 2;
+                const radius = center - 12;
+                ctx.clearRect(0, 0, size, size);
+
+                if (entries.length === 0) {
+                    ctx.beginPath();
+                    ctx.arc(center, center, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = '#14369B';
+                    ctx.fill();
+                    ctx.fillStyle = '#F3C65F';
+                    ctx.font = '800 32px Montserrat, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Chưa có SĐT dự thưởng', center, center);
+                    return;
+                }
+
+                const sliceAngle = (Math.PI * 2) / entries.length;
+                const centerButtonRadius = 82;
+                const innerTextPadding = centerButtonRadius + 14;
+                const outerTextPadding = radius - 14;
+                const maxTextWidth = outerTextPadding - innerTextPadding;
+                const baseFontSize = entries.length > 60 ? 12 : entries.length > 35 ? 15 : entries.length > 20 ? 18 : 22;
+
+                for (let i = 0; i < entries.length; i++) {
+                    const startAngle = currentAngle + i * sliceAngle;
+                    const endAngle = startAngle + sliceAngle;
+                    const palette = getSlicePalette(i, entries.length);
+
+                    ctx.beginPath();
+                    ctx.moveTo(center, center);
+                    ctx.arc(center, center, radius, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = palette.bg;
+                    ctx.fill();
+
+                    ctx.lineWidth = entries.length > 80 ? 0.8 : 1.6;
+                    ctx.strokeStyle = 'rgba(20, 54, 155, 0.24)';
+                    ctx.stroke();
+
+                    ctx.save();
+                    ctx.translate(center, center);
+                    ctx.rotate(startAngle + sliceAngle / 2);
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = palette.text;
+
+                    const label = entries[i];
+                    let currentFontSize = baseFontSize;
+                    ctx.font = `800 ${currentFontSize}px "Be Vietnam Pro", sans-serif`;
+                    while (currentFontSize > 10 && ctx.measureText(label).width > maxTextWidth) {
+                        currentFontSize -= 0.5;
+                        ctx.font = `800 ${currentFontSize}px "Be Vietnam Pro", sans-serif`;
+                    }
+                    ctx.fillText(label, innerTextPadding, 0);
+                    ctx.restore();
+                }
+
+                ctx.beginPath();
+                ctx.arc(center, center, centerButtonRadius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(20, 54, 155, 0.28)';
+                ctx.fill();
+            }
+
+            // ==========================================
+            // 6. LOGIC QUAY VÒNG TRÒN
+            // ==========================================
+            function spinWheel() {
+                if (isSpinning) return;
+                if (entries.length === 0) {
+                    showToast('Danh sách đang trống! Vui lòng nạp SĐT dự thưởng trước khi quay.', '⚠️');
+                    return;
+                }
+
+                isSpinning = true;
+                spinBtn.disabled = true;
+
+                const sliceAngle = (Math.PI * 2) / entries.length;
+                const winnerIndex = Math.floor(Math.random() * entries.length);
+
+                const pointerAngle = -Math.PI / 2;
+                const randomOffsetWithinSlice = (Math.random() * 0.6 - 0.3) * sliceAngle;
+                const targetSliceCenter = winnerIndex * sliceAngle + sliceAngle / 2 + randomOffsetWithinSlice;
+
+                let desiredFinalAngle = pointerAngle - targetSliceCenter;
+                const fullSpins = (8 + Math.floor(Math.random() * 4)) * Math.PI * 2;
+                while (desiredFinalAngle < currentAngle + fullSpins) {
+                    desiredFinalAngle += Math.PI * 2;
+                }
+
+                const startAngle = currentAngle;
+                const totalDelta = desiredFinalAngle - startAngle;
+                const duration = getConfiguredDurationMs(5);
+                const startTime = performance.now();
+                let lastTickIndex = -1;
+
+                function easeOutQuint(t) {
+                    return 1 - Math.pow(1 - t, 5);
+                }
+
+                function animateFrame(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = easeOutQuint(progress);
+
+                    currentAngle = startAngle + totalDelta * eased;
+                    drawWheel();
+
+                    const normalized = (((pointerAngle - currentAngle) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                    const currentSliceIndex = Math.floor(normalized / sliceAngle);
+                    if (currentSliceIndex !== lastTickIndex) {
+                        lastTickIndex = currentSliceIndex;
+                        playTickSound();
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateFrame);
+                    } else {
+                        isSpinning = false;
+                        spinBtn.disabled = false;
+                        handleSpinFinished(entries[winnerIndex]);
+                    }
+                }
+
+                requestAnimationFrame(animateFrame);
+            }
+
+            // ==========================================
+            // 7. XỬ LÝ VINH DANH & LỊCH SỬ TRÚNG GIẢI
+            // ==========================================
+            function parseEntryLabel(rawStr) {
+                const parts = rawStr.split('-');
+                if (parts.length >= 2) {
+                    const codeDigits = extractLast5PhoneDigits(parts[0]) || parts[0].trim();
+                    return {
+                        raw: rawStr,
+                        code: codeDigits,
+                        name: parts.slice(1).join('-').trim()
+                    };
+                }
+                const digitsOnly = extractLast5PhoneDigits(rawStr);
+                return {
+                    raw: rawStr,
+                    code: digitsOnly || rawStr.trim(),
+                    name: 'Khách hàng may mắn'
+                };
+            }
+
+            function handleSpinFinished(winnerRaw) {
+                const parsed = parseEntryLabel(winnerRaw);
+                const prizeName = prizeTitleInput.value.trim() || 'GIẢI THƯỞNG MAY MẮN HISEA';
+                const nowTime = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                currentWinner = {
+                    ...parsed,
+                    prize: prizeName,
+                    time: nowTime
+                };
+
+                winnersHistory.unshift(currentWinner);
+                savePersistedState();
+                renderWinnersHistory();
+
+                document.getElementById('modalPrizeName').innerText = prizeName;
+                document.getElementById('modalWinnerCode').innerText = parsed.code;
+                document.getElementById('modalWinnerName').innerText = parsed.name;
+                document.getElementById('winnerModal').classList.remove('hidden');
+
+                playWinFanfare();
+                launchConfetti();
+            }
+
+            function renderWinnersHistory() {
+                tabWinnersCount.innerText = winnersHistory.length;
+                const container = document.getElementById('winnersListContainer');
+                if (winnersHistory.length === 0) {
+                    container.innerHTML = '<div class="text-center py-12 text-slate-400 text-sm">Chưa có ai trúng giải trong phiên quay này.</div>';
+                    return;
+                }
+                container.innerHTML = winnersHistory.map((item, idx) => `
+                    <div class="p-3 rounded-xl bg-amber-50/85 border border-amber-200 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-full bg-amber-500 text-white font-heading font-extrabold text-xs flex items-center justify-center shrink-0">
+                                #${winnersHistory.length - idx}
+                            </span>
+                            <div>
+                                <div class="font-heading font-extrabold text-sm text-[#14369B]">
+                                    <span class="text-[#D93025]">${item.code}</span> - ${item.name}
+                                </div>
+                                <div class="text-[11px] text-slate-500">${item.prize} • ${item.time}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // ==========================================
+            // 8. ĐỒNG BỘ GOOGLE SHEET (TỰ CẮT 5 SỐ CUỐI SĐT)
+            // ==========================================
+            function buildGoogleSheetCandidateUrls(inputUrl) {
+                const url = inputUrl.trim();
+                if (url.includes('script.google.com')) {
+                    return [url.includes('?') ? url : `${url}?action=list`];
+                }
+                if (url.includes('tqx=out:csv') || url.includes('output=csv') || url.includes('format=csv')) {
+                    return [url];
+                }
+                const idMatch = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+                if (idMatch && idMatch[1]) {
+                    const sheetId = idMatch[1];
+                    const gidMatch = url.match(/[#&?]gid=([0-9]+)/);
+                    const gid = gidMatch ? gidMatch[1] : '0';
+                    return [
+                        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=${gid}`,
+                        `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
+                    ];
+                }
+                return [url];
+            }
+
+            function parseCsvLine(line) {
+                if (line.includes('\t')) {
+                    return line.split('\t').map(c => c.replace(/^"|"$/g, '').trim());
+                }
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (ch === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += ch;
+                    }
+                }
+                result.push(current.trim());
+                return result.map(c => c.replace(/^"|"$/g, '').trim());
+            }
+
+            function parseSafeEntries(rawText) {
+                const trimmed = rawText.trim();
+                if (!trimmed) return { error: 'Dữ liệu trống!' };
+
+                const lowerSample = trimmed.slice(0, 2000).toLowerCase();
+                if (
+                    lowerSample.includes('<!doctype') ||
+                    lowerSample.includes('<html') ||
+                    lowerSample.includes('<script') ||
+                    lowerSample.includes('object.defineproperty') ||
+                    lowerSample.includes('__proto__') ||
+                    lowerSample.includes('function(') ||
+                    lowerSample.includes('window.') ||
+                    lowerSample.includes('accounts.google.com')
+                ) {
+                    return {
+                        error: 'Google Sheet đang ở chế độ Riêng tư! Hãy mở Google Sheet → bấm Chia sẻ (Share) → chọn "Bất kỳ ai có đường liên kết (Người xem)", hoặc dán trực tiếp dữ liệu từ Sheet vào tab Cách 2.'
+                    };
+                }
+
+                // Hỗ trợ JSON từ Google Apps Script
+                if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                    try {
+                        const json = JSON.parse(trimmed);
+                        if (json.status === 'error') {
+                            return { error: json.message || 'API trả về lỗi.' };
+                        }
+                        const rows = Array.isArray(json) ? json : (json.data || json.rows || json.entries || []);
+                        const validList = [];
+                        const seen = new Set();
+                        rows.forEach(item => {
+                            const rawPhone = String(item.phone || item.sdt || item.so_dien_thoai || item['Số điện thoại'] || item['SĐT'] || item.code || '').trim();
+                            const rawName = String(item.name || item.full_name || item.ten || item['Họ và tên'] || '').trim();
+                            const last5 = extractLast5PhoneDigits(rawPhone);
+                            if (last5 && rawName) {
+                                const entryStr = `${last5} - ${rawName}`;
+                                if (!seen.has(entryStr)) {
+                                    seen.add(entryStr);
+                                    validList.push(entryStr);
+                                }
+                            }
+                        });
+                        if (validList.length === 0) {
+                            return { error: 'JSON không chứa dữ liệu Số điện thoại hợp lệ.' };
+                        }
+                        return { entries: validList };
+                    } catch (e) {
+                        return { error: 'Dữ liệu JSON từ Apps Script không hợp lệ.' };
+                    }
+                }
+
+                // Phân tích CSV / TSV từ Google Sheet -> ưu tiên tìm cột SĐT & Họ tên
+                const lines = trimmed.split(/\r?\n/).filter(l => l.trim().length > 0);
+                if (lines.length === 0) return { error: 'Không có dòng dữ liệu nào.' };
+
+                const firstCols = parseCsvLine(lines[0]).map(h => h.toLowerCase());
+                let phoneCol = firstCols.findIndex(h => h.includes('điện thoại') || h.includes('sđt') || h.includes('sdt') || h.includes('phone') || h.includes('zalo'));
+                let nameCol = firstCols.findIndex(h => h.includes('tên') || h.includes('name') || h.includes('khách') || h.includes('họ'));
+
+                const hasHeader = (phoneCol !== -1 || nameCol !== -1 || firstCols.includes('stt'));
+                const startIdx = hasHeader ? 1 : 0;
+
+                const validEntries = [];
+                const seenEntries = new Set();
+
+                for (let i = startIdx; i < lines.length; i++) {
+                    const cols = parseCsvLine(lines[i]);
+                    if (cols.length === 0) continue;
+
+                    let phoneVal = '';
+                    let nameVal = '';
+
+                    if (phoneCol !== -1 && cols[phoneCol]) phoneVal = cols[phoneCol];
+                    if (nameCol !== -1 && cols[nameCol]) nameVal = cols[nameCol];
+
+                    if (!phoneVal || !nameVal) {
+                        for (let c = 0; c < cols.length; c++) {
+                            const cell = cols[c];
+                            if (!cell) continue;
+                            const digitsOnly = cell.replace(/\D/g, '');
+                            if (!phoneVal && digitsOnly.length >= 5) {
+                                phoneVal = cell;
+                            } else if (!nameVal && /[a-zA-ZÀ-ỹ]{2,}/.test(cell) && !cell.includes('@')) {
+                                nameVal = cell;
+                            }
+                        }
+                    }
+
+                    const last5 = extractLast5PhoneDigits(phoneVal);
+                    const cleanName = nameVal.replace(/\s+/g, ' ').trim();
+
+                    if (last5 && cleanName.length >= 2) {
+                        const entryStr = `${last5} - ${cleanName}`;
+                        if (!seenEntries.has(entryStr)) {
+                            seenEntries.add(entryStr);
+                            validEntries.push(entryStr);
+                        }
+                    }
+                }
+
+                if (validEntries.length === 0) {
+                    return {
+                        error: 'Không tìm thấy dòng nào có đủ Số điện thoại (từ 5 số trở lên) và Tên khách hàng hợp lệ!'
+                    };
+                }
+
+                return { entries: validEntries };
+            }
+
+            // ==========================================
+            // 9. SỰ KIỆN TƯƠNG TÁC GIAO DIỆN
+            // ==========================================
+            function showToast(msg, icon = '✅') {
+                const box = document.getElementById('toastBox');
+                document.getElementById('toastIcon').innerText = icon;
+                document.getElementById('toastMessage').innerText = msg;
+                box.classList.remove('hidden');
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(() => box.classList.add('hidden'), 4500);
+            }
+
+            document.getElementById('editPrizeQuickBtn').addEventListener('click', () => {
+                prizeTitleInput.focus();
+                prizeTitleInput.select();
+            });
+            prizeTitleInput.addEventListener('input', savePersistedState);
+            if (spinDurationInput) {
+                spinDurationInput.addEventListener('change', () => {
+                    let v = parseInt(spinDurationInput.value, 10);
+                    if (isNaN(v) || v < 1) v = 1;
+                    if (v > 60) v = 60;
+                    spinDurationInput.value = v;
+                    savePersistedState();
+                    showToast(`Đã đặt thời gian quay là ${v} giây!`, '⏱️');
+                });
+            }
+
+            spinBtn.addEventListener('click', spinWheel);
+
+            // Sự kiện bấm 5 nút QUAY THƯỞNG từng cột
+            for (let col = 0; col < DIGIT_COLS; col++) {
+                document.getElementById(`spinDigitBtn${col}`).addEventListener('click', () => spinSingleSlotColumn(col));
+            }
+            document.getElementById('slotAutoSpinAllBtn').addEventListener('click', spinAllSlotColumnsAuto);
+            document.getElementById('slotResetBtn').addEventListener('click', () => resetSlotMachineState(true));
+
+            // Phím Space hỗ trợ thông minh cho cả 2 chế độ
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    if (!document.getElementById('winnerModal').classList.contains('hidden')) return;
+
+                    if (activeSpinMode === 'wheel') {
+                        spinWheel();
+                    } else {
+                        if (slotStepState.spinningCol.some(Boolean)) return;
+                        if (slotStepState.locked.every(Boolean)) {
+                            resetSlotMachineState(false);
+                        }
+                        const nextCol = slotStepState.locked.findIndex(locked => !locked);
+                        if (nextCol !== -1) {
+                            spinSingleSlotColumn(nextCol);
+                        }
+                    }
+                }
             });
 
-            if (foundPhone) {
-              formattedLines.push(`${foundName || 'Khách hàng'} - ${foundPhone}`);
+            // Chuyển đổi giữa 2 chế độ: Vòng Quay Tròn & Quay 5 Số Cuối SĐT
+            const modeWheelBtn = document.getElementById('modeWheelBtn');
+            const modeSlotBtn = document.getElementById('modeSlotBtn');
+            const wheelModeContainer = document.getElementById('wheelModeContainer');
+            const slotModeContainer = document.getElementById('slotModeContainer');
+            const spaceHintBadge = document.getElementById('spaceHintBadge');
+
+            function switchSpinMode(mode) {
+                if (isSpinning || slotStepState.spinningCol.some(Boolean)) {
+                    showToast('Vui lòng đợi lượt quay hiện tại dừng hẳn trước khi đổi chế độ!', '⏳');
+                    return;
+                }
+                activeSpinMode = mode;
+                if (mode === 'wheel') {
+                    wheelModeContainer.classList.remove('hidden');
+                    slotModeContainer.classList.add('hidden');
+                    modeWheelBtn.className = "px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F3C65F] to-[#E5A93B] text-[#0F2878] font-heading font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-2 cursor-pointer";
+                    modeSlotBtn.className = "px-4 sm:px-5 py-2.5 rounded-xl text-blue-100 hover:text-white font-heading font-extrabold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer";
+                    spaceHintBadge.innerHTML = 'Bấm <strong>QUAY</strong> hoặc phím <strong>Space</strong>';
+                    drawWheel();
+                } else {
+                    slotModeContainer.classList.remove('hidden');
+                    wheelModeContainer.classList.add('hidden');
+                    modeSlotBtn.className = "px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F3C65F] to-[#E5A93B] text-[#0F2878] font-heading font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-2 cursor-pointer";
+                    modeWheelBtn.className = "px-4 sm:px-5 py-2.5 rounded-xl text-blue-100 hover:text-white font-heading font-extrabold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer";
+                    spaceHintBadge.innerHTML = 'Bấm <strong>QUAY THƯỞNG</strong> từng cột hoặc nhấn <strong>Space</strong> 5 lần';
+                    initSlotReels();
+                    resetSlotMachineState(false);
+                }
             }
-          });
 
-          const joined = formattedLines.join('\n');
-          document.getElementById('rawParticipantsInput').value = joined;
-          participants = parseParticipantLines(joined);
-          renderParticipantsUI();
-          saveState();
+            modeWheelBtn.addEventListener('click', () => switchSpinMode('wheel'));
+            modeSlotBtn.addEventListener('click', () => switchSpinMode('slot'));
 
-          statusEl.textContent = `✅ Đã đồng bộ thành công ${participants.length} SĐT (lấy 5 số cuối).`;
-          statusEl.className = 'mt-1.5 text-[11px] text-emerald-300 font-semibold';
-        } catch (err) {
-          statusEl.textContent = '❌ Lỗi tải Sheet. Hãy bật quyền "Bất kỳ ai có liên kết đều có thể xem".';
-          statusEl.className = 'mt-1.5 text-[11px] text-red-300';
-        }
-      }
+            // Âm thanh & Chế độ Live toàn màn hình
+            document.getElementById('soundToggleBtn').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                document.getElementById('soundIcon').innerText = soundEnabled ? '🔊' : '🔇';
+                document.getElementById('soundLabel').innerText = soundEnabled ? 'Âm thanh: Bật' : 'Âm thanh: Tắt';
+            });
 
-      // Build 5 Slot Strips
-      function buildSlotStrips() {
-        for (let col = 0; col < REEL_COUNT; col++) {
-          const strip = document.getElementById(`reelStrip${col}`);
-          let html = '';
-          for (let i = 0; i < LOOP_DIGITS; i++) {
-            html += `<div class="slot-reel-cell">${i % 10}</div>`;
-          }
-          strip.innerHTML = html;
-          setReelPositionInstant(col, 0);
-        }
-      }
+            document.getElementById('liveModeBtn').addEventListener('click', () => {
+                isLiveMode = !isLiveMode;
+                const controlCol = document.getElementById('controlColumn');
+                const wheelCol = document.getElementById('wheelColumn');
+                const spinToolbar = document.getElementById('spinModeToolbar');
+                if (isLiveMode) {
+                    controlCol.classList.add('hidden');
+                    if (spinToolbar) spinToolbar.classList.add('hidden');
+                    wheelCol.classList.remove('lg:col-span-7');
+                    wheelCol.classList.add('lg:col-span-12');
+                    document.getElementById('liveModeLabel').innerText = 'Thoát Live';
+                } else {
+                    controlCol.classList.remove('hidden');
+                    if (spinToolbar) spinToolbar.classList.remove('hidden');
+                    wheelCol.classList.remove('lg:col-span-12');
+                    wheelCol.classList.add('lg:col-span-7');
+                    document.getElementById('liveModeLabel').innerText = 'Chế độ Live';
+                }
+            });
 
-      function getCellHeight(col) {
-        const win = document.getElementById(`reelWindow${col}`);
-        return win ? win.clientHeight : 150;
-      }
+            // Tabs Danh sách quay & Đã trúng giải
+            const tabEntriesBtn = document.getElementById('tabEntriesBtn');
+            const tabWinnersBtn = document.getElementById('tabWinnersBtn');
+            const entriesPanel = document.getElementById('entriesPanel');
+            const winnersPanel = document.getElementById('winnersPanel');
 
-      function setReelPositionInstant(col, digit) {
-        const strip = document.getElementById(`reelStrip${col}`);
-        const cellH = getCellHeight(col);
-        strip.style.transition = 'none';
-        strip.style.transform = `translate3d(0, -${digit * cellH}px, 0)`;
-      }
+            tabEntriesBtn.addEventListener('click', () => {
+                entriesPanel.classList.remove('hidden');
+                winnersPanel.classList.add('hidden');
+                tabEntriesBtn.className = "py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-[#14369B] bg-white border-b-2 border-[#006CC2] flex items-center justify-center gap-2 cursor-pointer";
+                tabWinnersBtn.className = "py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-slate-500 hover:text-[#14369B] flex items-center justify-center gap-2 cursor-pointer";
+            });
 
-      function pickTargetIfNeeded() {
-        if (targetEntryForCurrentRound) return targetEntryForCurrentRound;
-        if (participants.length > 0) {
-          const randIdx = Math.floor(Math.random() * participants.length);
-          targetEntryForCurrentRound = participants[randIdx];
-        } else {
-          const randomCode = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
-          targetEntryForCurrentRound = {
-            id: 'random_' + Date.now(),
-            code5: randomCode,
-            fullPhone: randomCode,
-            maskedPhone: '***' + randomCode,
-            name: 'Mã số may mắn ngẫu nhiên'
-          };
-        }
-        return targetEntryForCurrentRound;
-      }
+            tabWinnersBtn.addEventListener('click', () => {
+                winnersPanel.classList.remove('hidden');
+                entriesPanel.classList.add('hidden');
+                tabWinnersBtn.className = "py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-[#14369B] bg-white border-b-2 border-[#006CC2] flex items-center justify-center gap-2 cursor-pointer";
+                tabEntriesBtn.className = "py-3.5 px-4 font-heading font-bold text-xs sm:text-sm text-slate-500 hover:text-[#14369B] flex items-center justify-center gap-2 cursor-pointer";
+            });
 
-      function spinSingleColumn(col, customDurationMs = null, onComplete = null) {
-        if (reelSpinning[col] || reelLocked[col]) return;
+            // Tiện ích danh sách
+            document.getElementById('shuffleBtn').addEventListener('click', () => {
+                const arr = [...entries];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                setTextareaFromEntries(arr);
+                showToast('Đã trộn ngẫu nhiên thứ tự danh sách!', '🔀');
+            });
 
-        const targetObj = pickTargetIfNeeded();
-        const targetDigit = Number(targetObj.code5[col]);
-        const durationMs = customDurationMs !== null ? customDurationMs : spinDurationSec * 1000;
+            document.getElementById('sortBtn').addEventListener('click', () => {
+                const sorted = [...entries].sort((a, b) => a.localeCompare(b, 'vi', { numeric: true }));
+                setTextareaFromEntries(sorted);
+                showToast('Đã sắp xếp danh sách từ 00000 → 99999!', '🔢');
+            });
 
-        reelSpinning[col] = true;
-        updateSlotButtonsUI();
+            document.getElementById('loadSampleBtn').addEventListener('click', () => {
+                setTextareaFromEntries([...DEFAULT_SAMPLE_DATA]);
+                if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                showToast('Đã nạp lại 15 khách hàng mẫu!', '✨');
+            });
 
-        const strip = document.getElementById(`reelStrip${col}`);
-        const cellH = getCellHeight(col);
-        const startDigit = reelDigits[col];
-        // Spin at least 2 full rotations (20 digits) + land cleanly on targetDigit in 3rd cycle
-        const finalIndex = 20 + targetDigit;
-        const startOffset = startDigit * cellH;
-        const endOffset = finalIndex * cellH;
-        const distance = endOffset - startOffset;
+            document.getElementById('clearListBtn').addEventListener('click', () => {
+                setTextareaFromEntries([]);
+                if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                showToast('Đã xóa toàn bộ danh sách quay!', '🗑️');
+            });
 
-        const startTime = performance.now();
-        let lastTickStep = -1;
+            searchEntryInput.addEventListener('input', () => {
+                const keyword = searchEntryInput.value.trim().toLowerCase();
+                if (!keyword) return;
+                const foundIdx = entries.findIndex(line => line.toLowerCase().includes(keyword));
+                if (foundIdx !== -1) {
+                    const lines = entriesTextarea.value.split('\n');
+                    let charPos = 0;
+                    for (let i = 0; i < foundIdx; i++) {
+                        charPos += lines[i].length + 1;
+                    }
+                    entriesTextarea.focus();
+                    entriesTextarea.setSelectionRange(charPos, charPos + lines[foundIdx].length);
+                }
+            });
 
-        function animate(now) {
-          const elapsed = now - startTime;
-          const progress = Math.min(1, elapsed / durationMs);
-          // Smooth cubic-out deceleration
-          const eased = 1 - Math.pow(1 - progress, 3.2);
-          const currentOffset = startOffset + distance * eased;
+            entriesTextarea.addEventListener('input', () => syncEntriesFromTextarea(false));
+            entriesTextarea.addEventListener('paste', () => {
+                setTimeout(() => {
+                    syncEntriesFromTextarea(true);
+                    showToast(`Đã tự động cắt lấy 5 số cuối SĐT cho ${entries.length} khách hàng!`, '✨');
+                }, 40);
+            });
+            document.getElementById('cleanFormatBtn').addEventListener('click', () => {
+                syncEntriesFromTextarea(true);
+                showToast(`Đã chuẩn hóa 5 số cuối SĐT (${entries.length} dòng hợp lệ)!`, '🧹');
+            });
 
-          strip.style.transform = `translate3d(0, -${currentOffset}px, 0)`;
+            // Nút trên Popup Vinh Danh
+            document.getElementById('removeWinnerBtn').addEventListener('click', () => {
+                if (currentWinner) {
+                    const filtered = entries.filter(item => item !== currentWinner.raw);
+                    setTextareaFromEntries(filtered);
+                    if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                    showToast(`Đã loại ${currentWinner.code} khỏi vòng quay tiếp theo!`, '✅');
+                }
+                document.getElementById('winnerModal').classList.add('hidden');
+            });
 
-          const currentStep = Math.floor(currentOffset / cellH);
-          if (currentStep !== lastTickStep) {
-            lastTickStep = currentStep;
-            playTickSound(520 + (currentStep % 10) * 35);
-          }
+            document.getElementById('keepWinnerBtn').addEventListener('click', () => {
+                if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                document.getElementById('winnerModal').classList.add('hidden');
+            });
 
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          } else {
-            // Snap cleanly to exact targetDigit index in cycle 0
-            reelDigits[col] = targetDigit;
-            setReelPositionInstant(col, targetDigit);
-            reelSpinning[col] = false;
-            reelLocked[col] = true;
-            updateSlotButtonsUI();
-            updateLiveMatchBanner();
+            // Sao chép & xóa lịch sử trúng giải
+            document.getElementById('copyWinnersBtn').addEventListener('click', () => {
+                if (winnersHistory.length === 0) {
+                    showToast('Chưa có kết quả trúng giải để sao chép!', '⚠️');
+                    return;
+                }
+                const text = winnersHistory.map((w, i) => `${i + 1}. ${w.code} - ${w.name} (${w.prize})`).join('\n');
+                const tmp = document.createElement('textarea');
+                tmp.value = text;
+                document.body.appendChild(tmp);
+                tmp.select();
+                document.execCommand('copy');
+                document.body.removeChild(tmp);
+                showToast('Đã sao chép danh sách trúng giải vào bộ nhớ tạm!', '📋');
+            });
 
-            if (reelLocked.every(Boolean)) {
-              finalize5DigitWin();
+            document.getElementById('clearWinnersBtn').addEventListener('click', () => {
+                winnersHistory = [];
+                savePersistedState();
+                renderWinnersHistory();
+                showToast('Đã xóa lịch sử trúng giải!', '🗑️');
+            });
+
+            // Modal Đồng bộ Google Sheet
+            const syncModal = document.getElementById('syncSheetModal');
+            const syncModeLinkBtn = document.getElementById('syncModeLinkBtn');
+            const syncModePasteBtn = document.getElementById('syncModePasteBtn');
+            const syncModeLinkBox = document.getElementById('syncModeLinkBox');
+            const syncModePasteBox = document.getElementById('syncModePasteBox');
+            let currentSyncMode = 'link';
+
+            function switchSyncMode(mode) {
+                currentSyncMode = mode;
+                if (mode === 'link') {
+                    syncModeLinkBox.classList.remove('hidden');
+                    syncModePasteBox.classList.add('hidden');
+                    syncModeLinkBtn.className = "py-2 px-3 rounded-lg bg-white text-[#14369B] font-heading font-bold text-xs shadow-sm transition cursor-pointer";
+                    syncModePasteBtn.className = "py-2 px-3 rounded-lg text-slate-600 hover:text-[#14369B] font-heading font-bold text-xs transition cursor-pointer";
+                } else {
+                    syncModePasteBox.classList.remove('hidden');
+                    syncModeLinkBox.classList.add('hidden');
+                    syncModePasteBtn.className = "py-2 px-3 rounded-lg bg-white text-[#14369B] font-heading font-bold text-xs shadow-sm transition cursor-pointer";
+                    syncModeLinkBtn.className = "py-2 px-3 rounded-lg text-slate-600 hover:text-[#14369B] font-heading font-bold text-xs transition cursor-pointer";
+                }
             }
-            if (typeof onComplete === 'function') onComplete();
-          }
+
+            syncModeLinkBtn.addEventListener('click', () => switchSyncMode('link'));
+            syncModePasteBtn.addEventListener('click', () => switchSyncMode('paste'));
+
+            document.getElementById('openSyncModalBtn').addEventListener('click', () => syncModal.classList.remove('hidden'));
+            document.getElementById('closeSyncModalBtn').addEventListener('click', () => syncModal.classList.add('hidden'));
+            document.getElementById('cancelSyncBtn').addEventListener('click', () => syncModal.classList.add('hidden'));
+
+            document.getElementById('confirmSyncBtn').addEventListener('click', async function() {
+                if (currentSyncMode === 'paste') {
+                    const rawPaste = document.getElementById('pasteRawSheetInput').value;
+                    const parsed = parseSafeEntries(rawPaste);
+                    if (parsed.error) {
+                        showToast(parsed.error, '⚠️');
+                        return;
+                    }
+                    setTextareaFromEntries(parsed.entries);
+                    if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                    syncModal.classList.add('hidden');
+                    showToast(`Đã nạp thành công ${parsed.entries.length} SĐT (lấy 5 số cuối)!`, '🎉');
+                    return;
+                }
+
+                const rawUrl = document.getElementById('googleSheetUrlInput').value.trim();
+                if (!rawUrl) {
+                    showToast('Vui lòng dán đường dẫn Google Sheet!', '⚠️');
+                    return;
+                }
+                try {
+                    localStorage.setItem(STORAGE_KEYS.SHEET_URL, rawUrl);
+                } catch (e) {}
+
+                const candidateUrls = buildGoogleSheetCandidateUrls(rawUrl);
+                const btn = this;
+                btn.disabled = true;
+                btn.innerText = '⏳ Đang tải dữ liệu...';
+
+                let lastErrorMsg = 'Google Sheet đang ở chế độ Riêng tư! Hãy mở Google Sheet → bấm Chia sẻ (Share) → chọn "Bất kỳ ai có đường liên kết (Người xem)", hoặc dán trực tiếp dữ liệu từ Sheet vào tab Cách 2.';
+                let loadedSuccessfully = false;
+
+                for (const targetUrl of candidateUrls) {
+                    try {
+                        const res = await fetch(targetUrl);
+                        if (!res.ok) continue;
+                        const text = await res.text();
+                        const parsed = parseSafeEntries(text);
+                        if (parsed.error) {
+                            lastErrorMsg = parsed.error;
+                        } else {
+                            setTextareaFromEntries(parsed.entries);
+                            if (activeSpinMode === 'slot') resetSlotMachineState(false);
+                            syncModal.classList.add('hidden');
+                            showToast(`Đã tải thành công ${parsed.entries.length} SĐT (cắt 5 số cuối) từ Google Sheet!`, '🎉');
+                            loadedSuccessfully = true;
+                            break;
+                        }
+                    } catch (err) {
+                        // Thử URL dự phòng tiếp theo
+                    }
+                }
+
+                if (!loadedSuccessfully) {
+                    showToast(lastErrorMsg, '⚠️');
+                    switchSyncMode('paste');
+                }
+
+                btn.disabled = false;
+                btn.innerText = '⬇️ Nạp danh sách 5 số cuối SĐT';
+            });
+
+            // Khởi chạy toàn bộ ứng dụng
+            loadPersistedState();
+            buildWheelLedRing();
+            setTextareaFromEntries(entries);
+            renderWinnersHistory();
+            initSlotReels();
         }
 
-        requestAnimationFrame(animate);
-      }
-
-      function spinAll5Columns() {
-        if (reelSpinning.some(Boolean)) return;
-        if (reelLocked.every(Boolean)) {
-          resetSlotMachine();
-        }
-        const totalMs = spinDurationSec * 1000;
-        const stepStagger = Math.min(450, Math.floor(totalMs * 0.14));
-
-        for (let col = 0; col < REEL_COUNT; col++) {
-          if (!reelLocked[col]) {
-            const colDuration = Math.max(800, totalMs - (REEL_COUNT - 1 - col) * stepStagger);
-            spinSingleColumn(col, colDuration);
-          }
-        }
-      }
-
-      function resetSlotMachine() {
-        if (reelSpinning.some(Boolean)) return;
-        reelDigits = [0, 0, 0, 0, 0];
-        reelLocked = [false, false, false, false, false];
-        targetEntryForCurrentRound = null;
-        for (let col = 0; col < REEL_COUNT; col++) {
-          setReelPositionInstant(col, 0);
-        }
-        updateSlotButtonsUI();
-        document.getElementById('slotMatchResultText').textContent = 'Bấm "QUAY THƯỞNG" hoặc phím Space để bắt đầu...';
-      }
-
-      function updateSlotButtonsUI() {
-        const anySpinning = reelSpinning.some(Boolean);
-        for (let col = 0; col < REEL_COUNT; col++) {
-          const btn = document.getElementById(`spinColBtn${col}`);
-          btn.disabled = reelSpinning[col] || reelLocked[col];
-          btn.textContent = reelLocked[col] ? `✓ SỐ ${reelDigits[col]}` : '🎯 QUAY THƯỞNG';
-        }
-        document.getElementById('spinAll5Btn').disabled = anySpinning || reelLocked.every(Boolean);
-        document.getElementById('resetSlotBtn').disabled = anySpinning;
-      }
-
-      function updateLiveMatchBanner() {
-        const displayChars = reelDigits.map((d, idx) => (reelLocked[idx] ? d : '?'));
-        const revealedCount = reelLocked.filter(Boolean).length;
-        const bannerText = document.getElementById('slotMatchResultText');
-        if (revealedCount < REEL_COUNT) {
-          bannerText.textContent = `Đã mở: [ ${displayChars.join(' - ')} ] • Bấm "QUAY THƯỞNG" cột tiếp theo`;
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHiseaLivestreamApp);
         } else {
-          const finalCode = reelDigits.join('');
-          const winner = targetEntryForCurrentRound;
-          bannerText.textContent = `🎉 TRÚNG THƯỞNG: [ ${finalCode} ] — ${winner ? winner.name : ''}`;
+            initHiseaLivestreamApp();
         }
-      }
-
-      function finalize5DigitWin() {
-        const finalCode = reelDigits.join('');
-        const winner = targetEntryForCurrentRound || {
-          code5: finalCode,
-          fullPhone: finalCode,
-          maskedPhone: '***' + finalCode,
-          name: 'Khách hàng may mắn'
-        };
-        announceWinner(winner);
-      }
-
-      // Classic Wheel Drawing & Spin
-      const WHEEL_COLORS = ['#005BB5', '#F5C351', '#082F7A', '#FFFFFF', '#0E4A9E', '#FFE082'];
-
-      function buildWheelLedRing() {
-        const ring = document.getElementById('wheelLedRing');
-        const count = 24;
-        let html = '';
-        for (let i = 0; i < count; i++) {
-          const angle = (i / count) * Math.PI * 2;
-          const x = 50 + Math.cos(angle) * 48.2;
-          const y = 50 + Math.sin(angle) * 48.2;
-          html += `<span class="led-dot" style="left:${x}%;top:${y}%;"></span>`;
-        }
-        ring.innerHTML = html;
-      }
-
-      function drawWheelCanvas() {
-        const canvas = document.getElementById('wheelCanvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const radius = cx - 8;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const items = participants.length > 0
-          ? participants.slice(0, 40)
-          : Array.from({ length: 10 }, (_, i) => ({ code5: String(i * 11111).padStart(5, '0'), name: `Mẫu ${i + 1}` }));
-
-        const sliceAngle = (Math.PI * 2) / items.length;
-
-        items.forEach((item, i) => {
-          const start = wheelAngle + i * sliceAngle - Math.PI / 2;
-          const end = start + sliceAngle;
-          const bg = WHEEL_COLORS[i % WHEEL_COLORS.length];
-
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.arc(cx, cy, radius, start, end);
-          ctx.closePath();
-          ctx.fillStyle = bg;
-          ctx.fill();
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = 'rgba(245, 195, 81, 0.55)';
-          ctx.stroke();
-
-          // Text label
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(start + sliceAngle / 2);
-          ctx.textAlign = 'right';
-          ctx.fillStyle = (bg === '#F5C351' || bg === '#FFFFFF' || bg === '#FFE082') ? '#071938' : '#FFFFFF';
-          ctx.font = items.length > 24 ? 'bold 18px "Be Vietnam Pro"' : '900 22px "Be Vietnam Pro"';
-          ctx.fillText(`${item.code5}`, radius - 26, 7);
-          ctx.restore();
-        });
-      }
-
-      function spinClassicWheel() {
-        if (isWheelSpinning) return;
-        const pool = participants.length > 0
-          ? participants.slice(0, 40)
-          : Array.from({ length: 10 }, (_, i) => ({
-              id: 'sample_' + i,
-              code5: String(i * 11111).padStart(5, '0'),
-              fullPhone: String(i * 11111).padStart(5, '0'),
-              maskedPhone: '***' + String(i * 11111).padStart(5, '0'),
-              name: `Khách hàng mẫu #${i + 1}`
-            }));
-
-        isWheelSpinning = true;
-        document.getElementById('spinWheelCenterBtn').disabled = true;
-        document.getElementById('spinWheelBottomBtn').disabled = true;
-
-        const chosenIndex = Math.floor(Math.random() * pool.length);
-        const sliceAngle = (Math.PI * 2) / pool.length;
-        // Pointer is at top (-PI/2), so align center of chosenIndex with top
-        const targetSliceCenter = chosenIndex * sliceAngle + sliceAngle / 2;
-        const extraSpins = Math.PI * 2 * (6 + Math.floor(spinDurationSec * 1.2));
-        const startAngle = wheelAngle;
-        const normalizedCurrent = ((startAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-        const desiredFinalMod = ((Math.PI * 2) - targetSliceCenter) % (Math.PI * 2);
-        let delta = desiredFinalMod - normalizedCurrent;
-        if (delta <= 0) delta += Math.PI * 2;
-        const totalRotation = extraSpins + delta;
-
-        const durationMs = spinDurationSec * 1000;
-        const startTime = performance.now();
-        let lastSlicePassed = -1;
-
-        function animateWheel(now) {
-          const elapsed = now - startTime;
-          const progress = Math.min(1, elapsed / durationMs);
-          const eased = 1 - Math.pow(1 - progress, 3.5);
-          wheelAngle = startAngle + totalRotation * eased;
-          drawWheelCanvas();
-
-          const currentSlice = Math.floor(((wheelAngle % (Math.PI * 2)) + Math.PI * 2) / sliceAngle);
-          if (currentSlice !== lastSlicePassed) {
-            lastSlicePassed = currentSlice;
-            playTickSound(680);
-          }
-
-          if (progress < 1) {
-            requestAnimationFrame(animateWheel);
-          } else {
-            isWheelSpinning = false;
-            document.getElementById('spinWheelCenterBtn').disabled = false;
-            document.getElementById('spinWheelBottomBtn').disabled = false;
-            announceWinner(pool[chosenIndex]);
-          }
-        }
-
-        requestAnimationFrame(animateWheel);
-      }
-
-      // Announce Winner + Confetti + Auto-remove
-      function announceWinner(winnerObj) {
-        playWinFanfare();
-        if (typeof confetti === 'function') {
-          confetti({ particleCount: 110, spread: 75, origin: { y: 0.6 } });
-        }
-
-        const prizeTitle = document.getElementById('prizeTitleInput').value.trim() || 'GIẢI THƯỞNG HISEA';
-        const maskLive = document.getElementById('maskPhoneLiveChk').checked;
-        const displayPhone = maskLive ? winnerObj.maskedPhone : winnerObj.fullPhone;
-
-        document.getElementById('modalPrizeName').textContent = prizeTitle;
-        document.getElementById('modalWinningDigits').textContent = winnerObj.code5;
-        document.getElementById('modalWinnerName').textContent = winnerObj.name;
-        document.getElementById('modalWinnerPhone').textContent = `SĐT: ${displayPhone}`;
-
-        const modal = document.getElementById('winnerModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        // Record in history
-        winnersHistory.unshift({
-          prize: prizeTitle,
-          code5: winnerObj.code5,
-          name: winnerObj.name,
-          phone: displayPhone,
-          time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-        });
-
-        // Auto remove winner from pool if enabled
-        if (document.getElementById('autoRemoveWinnerChk').checked && participants.length > 0) {
-          const removeIdx = participants.findIndex(p => p.id === winnerObj.id || p.code5 === winnerObj.code5);
-          if (removeIdx !== -1) {
-            participants.splice(removeIdx, 1);
-            document.getElementById('rawParticipantsInput').value = participants
-              .map(p => `${p.name} - ${p.fullPhone}`)
-              .join('\n');
-          }
-        }
-
-        renderParticipantsUI();
-        saveState();
-      }
-
-      function renderWinnersHistoryModal() {
-        const listEl = document.getElementById('winnersHistoryList');
-        if (winnersHistory.length === 0) {
-          listEl.innerHTML = `<p class="text-center text-sm text-blue-200/60 py-6">Chưa có lượt quay trúng thưởng nào.</p>`;
-          return;
-        }
-        listEl.innerHTML = winnersHistory.map((w, idx) => `
-          <div class="p-3.5 rounded-2xl bg-[#041029]/90 border border-amber-300/25 flex items-center justify-between gap-3">
-            <div>
-              <div class="text-[11px] font-bold text-amber-300">${escapeHtml(w.prize)} • ${w.time}</div>
-              <div class="text-sm font-extrabold text-white">${winnersHistory.length - idx}. ${escapeHtml(w.name)}</div>
-              <div class="text-xs text-blue-200/80">SĐT: ${escapeHtml(w.phone)}</div>
-            </div>
-            <div class="px-3 py-1.5 rounded-xl bg-white text-[#082F7A] font-black text-base tracking-widest border-2 border-[#F5C351]">
-              ${escapeHtml(w.code5)}
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Event Bindings
-      document.getElementById('tabSlotMode').addEventListener('click', () => {
-        currentMode = 'slot';
-        document.getElementById('slotMachineView').classList.remove('hidden');
-        document.getElementById('wheelView').classList.add('hidden');
-        document.getElementById('wheelView').classList.remove('flex');
-        document.getElementById('tabSlotMode').className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 gold-btn';
-        document.getElementById('tabWheelMode').className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-blue-100 hover:text-white transition flex items-center gap-2';
-      });
-
-      document.getElementById('tabWheelMode').addEventListener('click', () => {
-        currentMode = 'wheel';
-        document.getElementById('slotMachineView').classList.add('hidden');
-        document.getElementById('wheelView').classList.remove('hidden');
-        document.getElementById('wheelView').classList.add('flex');
-        document.getElementById('tabWheelMode').className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 gold-btn';
-        document.getElementById('tabSlotMode').className = 'px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-blue-100 hover:text-white transition flex items-center gap-2';
-        drawWheelCanvas();
-      });
-
-      document.getElementById('spinDurationInput').addEventListener('change', (e) => {
-        spinDurationSec = Math.max(1, Math.min(60, Number(e.target.value) || 5));
-        e.target.value = spinDurationSec;
-        saveState();
-      });
-
-      for (let col = 0; col < REEL_COUNT; col++) {
-        document.getElementById(`spinColBtn${col}`).addEventListener('click', () => {
-          spinSingleColumn(col);
-        });
-      }
-
-      document.getElementById('spinAll5Btn').addEventListener('click', spinAll5Columns);
-      document.getElementById('resetSlotBtn').addEventListener('click', resetSlotMachine);
-
-      document.getElementById('spinWheelCenterBtn').addEventListener('click', spinClassicWheel);
-      document.getElementById('spinWheelBottomBtn').addEventListener('click', spinClassicWheel);
-
-      // Spacebar shortcut for sequential column spin or wheel spin
-      document.addEventListener('keydown', (e) => {
-        if (e.code !== 'Space') return;
-        const tag = (e.target && e.target.tagName) || '';
-        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-        e.preventDefault();
-
-        const winnerModal = document.getElementById('winnerModal');
-        if (!winnerModal.classList.contains('hidden')) {
-          winnerModal.classList.add('hidden');
-          winnerModal.classList.remove('flex');
-          if (currentMode === 'slot') resetSlotMachine();
-          return;
-        }
-
-        if (currentMode === 'slot') {
-          if (reelLocked.every(Boolean)) {
-            resetSlotMachine();
-            return;
-          }
-          const nextCol = reelLocked.findIndex((locked, idx) => !locked && !reelSpinning[idx]);
-          if (nextCol !== -1) spinSingleColumn(nextCol);
-        } else {
-          spinClassicWheel();
-        }
-      });
-
-      // Live Mode Toggle
-      document.getElementById('liveModeBtn').addEventListener('click', () => {
-        const isLive = document.body.classList.toggle('live-mode');
-        document.getElementById('liveModeText').textContent = isLive ? 'Thoát Live' : 'Chế độ Live';
-        document.getElementById('liveModeIcon').textContent = isLive ? '✕' : '🎥';
-        // Re-align reels after layout resize
-        for (let col = 0; col < REEL_COUNT; col++) {
-          setReelPositionInstant(col, reelDigits[col]);
-        }
-      });
-
-      // Sound Toggle
-      document.getElementById('soundToggleBtn').addEventListener('click', () => {
-        soundEnabled = !soundEnabled;
-        document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
-        document.getElementById('soundLabel').textContent = soundEnabled ? 'Âm thanh: Bật' : 'Âm thanh: Tắt';
-      });
-
-      // Participant Management Buttons
-      document.getElementById('syncSheetBtn').addEventListener('click', syncFromGoogleSheet);
-
-      document.getElementById('applyListBtn').addEventListener('click', () => {
-        const text = document.getElementById('rawParticipantsInput').value;
-        participants = parseParticipantLines(text);
-        renderParticipantsUI();
-        saveState();
-      });
-
-      document.getElementById('clearListBtn').addEventListener('click', () => {
-        participants = [];
-        document.getElementById('rawParticipantsInput').value = '';
-        renderParticipantsUI();
-        saveState();
-      });
-
-      document.getElementById('loadSampleBtn').addEventListener('click', () => {
-        const sample = [
-          'Nguyễn Minh Tuấn - 0901234567',
-          'Trần Thị Hồng Nhung - 0912888999',
-          'Lê Hoàng Phúc - 0987654321',
-          'Phạm Quốc Bảo - 0934567123',
-          'Võ Thị Kim Anh - 0978112233',
-          'Đặng Gia Huy - 0909456789',
-          'Bùi Thanh Thảo - 0918334455',
-          'Hoàng Đức Mạnh - 0965778899'
-        ].join('\n');
-        document.getElementById('rawParticipantsInput').value = sample;
-        participants = parseParticipantLines(sample);
-        renderParticipantsUI();
-        saveState();
-      });
-
-      document.getElementById('autoRemoveWinnerChk').addEventListener('change', saveState);
-      document.getElementById('maskPhoneLiveChk').addEventListener('change', () => {
-        renderParticipantsUI();
-        saveState();
-      });
-      document.getElementById('prizeTitleInput').addEventListener('input', saveState);
-      document.getElementById('editPrizeFocusBtn').addEventListener('click', () => {
-        const inp = document.getElementById('prizeTitleInput');
-        inp.focus();
-        inp.select();
-      });
-
-      // Modals
-      document.getElementById('closeWinnerModalBtn').addEventListener('click', () => {
-        const modal = document.getElementById('winnerModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        if (currentMode === 'slot') resetSlotMachine();
-      });
-
-      document.getElementById('historyModalBtn').addEventListener('click', () => {
-        renderWinnersHistoryModal();
-        const modal = document.getElementById('historyModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      });
-
-      ['closeHistoryModalBtn', 'closeHistoryFooterBtn'].forEach(id => {
-        document.getElementById(id).addEventListener('click', () => {
-          const modal = document.getElementById('historyModal');
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-        });
-      });
-
-      document.getElementById('clearHistoryBtn').addEventListener('click', () => {
-        winnersHistory = [];
-        renderWinnersHistoryModal();
-        renderParticipantsUI();
-        saveState();
-      });
-
-      window.addEventListener('resize', () => {
-        for (let col = 0; col < REEL_COUNT; col++) {
-          setReelPositionInstant(col, reelDigits[col]);
-        }
-      });
-
-      // Initialize
-      loadState();
-      buildSlotStrips();
-      buildWheelLedRing();
-      renderParticipantsUI();
-    })();
-  </script>
+    </script>
 </body>
 </html>
